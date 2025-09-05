@@ -425,8 +425,8 @@ with expander:
 # Footer
 st.markdown("""
 <p class="footer">
-    © 2023 Wind Energy Analytics Dashboard | For demonstration purposes only<br>
+    © 2025 Wind Energy Analytics Dashboard by Prakarsh | For demonstration purposes only<br>
     Data Sources: National Institute of Wind Energy (NIWE), Ministry of New and Renewable Energy (MNRE), India Meteorological Department (IMD)<br>
-    Last updated: """ + datetime.now().strftime("%Y-%m-%d %H:%M") + """
+   
 </p>
 """, unsafe_allow_html=True)
