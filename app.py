@@ -14,67 +14,102 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for styling
+# Custom CSS for styling with cool color scheme
 st.markdown("""
 <style>
     .main-header {
-        font-size: 2.5rem;
-        color: #1f77b4;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #1f77b4;
+        font-size: 2.8rem;
+        color: #0B5345;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 3px solid #0B5345;
+        font-weight: 700;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
     }
     .metric-card {
-        background-color: #f0f2f6;
+        background: linear-gradient(135deg, #0B5345 0%, #1ABC9C 100%);
         padding: 1.5rem;
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 0.8rem;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        color: white;
+        border: 1px solid #1ABC9C;
     }
     .metric-value {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: #1f77b4;
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
     }
     .metric-label {
         font-size: 0.9rem;
-        color: #7f7f7f;
+        color: rgba(255, 255, 255, 0.85);
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 1.2px;
+        font-weight: 500;
     }
     .footer {
         text-align: center;
-        margin-top: 2rem;
-        color: #7f7f7f;
-        font-size: 0.8rem;
-        padding-top: 1rem;
-        border-top: 1px solid #e6e6e6;
+        margin-top: 2.5rem;
+        color: #7F8C8D;
+        font-size: 0.85rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid #BDC3C7;
     }
     .stSlider > div > div > div {
-        background-color: #1f77b4;
+        background: linear-gradient(90deg, #1ABC9C, #0B5345);
     }
     .wind-speed-indicator {
-        height: 10px;
-        background: linear-gradient(90deg, #add8e6, #1f77b4, #000080);
-        border-radius: 5px;
-        margin: 10px 0;
+        height: 12px;
+        background: linear-gradient(90deg, #AED6F1, #3498DB, #2E86C1);
+        border-radius: 6px;
+        margin: 12px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .district-selector {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #E8F8F5 0%, #D1F2EB 100%);
+        padding: 1.2rem;
+        border-radius: 0.8rem;
+        margin-bottom: 1.2rem;
+        border: 1px solid #A3E4D7;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
     .source-info {
         font-size: 0.8rem;
-        color: #7f7f7f;
+        color: #7F8C8D;
         font-style: italic;
     }
     .map-container {
-        border-radius: 0.5rem;
+        border-radius: 0.8rem;
         overflow: hidden;
+        margin-bottom: 1.2rem;
+        border: 1px solid #BDC3C7;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    .section-header {
+        color: #0B5345;
+        border-left: 5px solid #1ABC9C;
+        padding-left: 12px;
+        margin-top: 1.5rem;
         margin-bottom: 1rem;
-        border: 1px solid #e6e6e6;
+    }
+    /* Sidebar styling */
+    .css-1d391kg, .css-1v0mbdj, .css-1y4v3va {
+        background-color: #E8F8F5;
+    }
+    /* Button styling */
+    .stButton button {
+        background: linear-gradient(135deg, #0B5345 0%, #1ABC9C 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+    }
+    /* Radio button styling */
+    .stRadio > div {
+        background-color: #E8F8F5;
+        padding: 10px;
+        border-radius: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -147,11 +182,11 @@ with st.sidebar:
     selected_district = st.selectbox("", list(district_data.keys()), index=0)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.header("Project Parameters")
+    st.markdown('<h3 class="section-header">Project Parameters</h3>', unsafe_allow_html=True)
     years = st.slider("Project Lifetime (Years)", 1, 25, 10)
     capacity_mw = st.number_input("Turbine Capacity (MW)", 0.5, 10.0, 2.0, step=0.5)
     
-    st.markdown("### Wind Conditions")
+    st.markdown('<h3 class="section-header">Wind Conditions</h3>', unsafe_allow_html=True)
     avg_wind_speed = st.slider("Average Wind Speed (m/s)", 3.0, 12.0, 
                               district_data[selected_district]["wind_speed"], step=0.1)
     st.markdown('<div class="wind-speed-indicator"></div>', unsafe_allow_html=True)
@@ -160,7 +195,7 @@ with st.sidebar:
     turbulence = st.slider("Turbulence Intensity (%)", 5.0, 25.0, 
                           district_data[selected_district]["turbulence"], step=0.1)
     
-    st.markdown("### Financial Parameters")
+    st.markdown('<h3 class="section-header">Financial Parameters</h3>', unsafe_allow_html=True)
     turbine_cost = st.number_input("Turbine Cost (₹ lakhs/MW)", 500, 1000, 650)
     om_cost = st.number_input("O&M Cost (₹ lakhs/MW/year)", 10, 50, 25)
     tariff_rate = st.number_input("Electricity Tariff (₹/kWh)", 3.0, 8.0, 4.5, step=0.1)
@@ -173,11 +208,11 @@ col1, col2 = st.columns([2, 1])
 
 with col1:
     # District information
-    st.subheader(f"District Overview: {selected_district}")
+    st.markdown(f'<h3 class="section-header">District Overview: {selected_district}</h3>', unsafe_allow_html=True)
     
     # Create a map centered on the selected district
     map_center = [district_data[selected_district]["lat"], district_data[selected_district]["lon"]]
-    m = folium.Map(location=map_center, zoom_start=10)
+    m = folium.Map(location=map_center, zoom_start=10, tiles="CartoDB positron")
     
     # Add marker for the selected district
     folium.Marker(
@@ -229,35 +264,38 @@ with col1:
                            ["Energy Output", "Financial Performance", "Cash Flow Analysis"], 
                            horizontal=True)
     
-    # Create charts
+    # Create charts with updated color scheme
     fig, ax = plt.subplots(figsize=(10, 6))
+    plt.style.use('default')  # Reset to default style
     
     if chart_option == "Energy Output":
-        ax.plot(years_range, cumulative_generation, marker="o", linewidth=2, color="#1f77b4")
-        ax.fill_between(years_range, cumulative_generation, alpha=0.3, color="#1f77b4")
-        ax.set_ylabel("Cumulative Energy (MWh)")
-        ax.set_title("Projected Energy Output Over Time")
+        ax.plot(years_range, cumulative_generation, marker="o", linewidth=2.5, color="#1ABC9C", markersize=8)
+        ax.fill_between(years_range, cumulative_generation, alpha=0.3, color="#1ABC9C")
+        ax.set_ylabel("Cumulative Energy (MWh)", fontweight='bold')
+        ax.set_title("Projected Energy Output Over Time", fontweight='bold', fontsize=14)
+        ax.grid(True, alpha=0.3, linestyle='--')
     elif chart_option == "Financial Performance":
-        ax.plot(years_range, cumulative_revenue, marker="s", linewidth=2, color="#2ca02c", label="Revenue")
-        ax.axhline(y=total_investment, color="#d62728", linestyle="--", label="Initial Investment")
-        ax.fill_between(years_range, cumulative_revenue, alpha=0.3, color="#2ca02c")
-        ax.set_ylabel("Amount (₹)")
-        ax.set_title("Financial Performance Over Time")
+        ax.plot(years_range, cumulative_revenue, marker="s", linewidth=2.5, color="#3498DB", label="Revenue", markersize=8)
+        ax.axhline(y=total_investment, color="#E74C3C", linestyle="--", linewidth=2, label="Initial Investment")
+        ax.fill_between(years_range, cumulative_revenue, alpha=0.3, color="#3498DB")
+        ax.set_ylabel("Amount (₹)", fontweight='bold')
+        ax.set_title("Financial Performance Over Time", fontweight='bold', fontsize=14)
         ax.legend()
+        ax.grid(True, alpha=0.3, linestyle='--')
     else:
-        ax.plot(years_range, cumulative_cash_flow, marker="^", linewidth=2, color="#ff7f0e")
-        ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) >= 0, alpha=0.3, color="#2ca02c")
-        ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) < 0, alpha=0.3, color="#d62728")
-        ax.axhline(y=0, color="#d62728", linestyle="--")
-        ax.set_ylabel("Net Cash Flow (₹)")
-        ax.set_title("Project Cash Flow Over Time")
+        ax.plot(years_range, cumulative_cash_flow, marker="^", linewidth=2.5, color="#9B59B6", markersize=8)
+        ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) >= 0, alpha=0.3, color="#2ECC71")
+        ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) < 0, alpha=0.3, color="#E74C3C")
+        ax.axhline(y=0, color="#E74C3C", linestyle="--", linewidth=2)
+        ax.set_ylabel("Net Cash Flow (₹)", fontweight='bold')
+        ax.set_title("Project Cash Flow Over Time", fontweight='bold', fontsize=14)
+        ax.grid(True, alpha=0.3, linestyle='--')
     
-    ax.set_xlabel("Years")
-    ax.grid(True, alpha=0.3)
+    ax.set_xlabel("Years", fontweight='bold')
     st.pyplot(fig)
     
     # Additional charts
-    st.subheader("Performance Details")
+    st.markdown('<h3 class="section-header">Performance Details</h3>', unsafe_allow_html=True)
     col1b, col2b = st.columns(2)
     
     with col1b:
@@ -265,30 +303,34 @@ with col1:
         wind_speeds = np.linspace(3, 12, 10)
         cap_factors = 0.35 * (wind_speeds/12) * (1 - (turbulence - 10)/100)
         
-        fig2, ax2 = plt.subplots(figsize=(8, 4))
-        ax2.plot(wind_speeds, cap_factors, marker='o', color='#1f77b4')
-        ax2.axvline(x=avg_wind_speed, color='red', linestyle='--', alpha=0.7)
-        ax2.set_xlabel('Wind Speed (m/s)')
-        ax2.set_ylabel('Capacity Factor')
-        ax2.set_title('Capacity Factor vs. Wind Speed')
-        ax2.grid(True, alpha=0.3)
+        fig2, ax2 = plt.subplots(figsize=(8, 4.5))
+        ax2.plot(wind_speeds, cap_factors, marker='o', color='#3498DB', linewidth=2.5, markersize=6)
+        ax2.axvline(x=avg_wind_speed, color='#E74C3C', linestyle='--', alpha=0.8, linewidth=2)
+        ax2.set_xlabel('Wind Speed (m/s)', fontweight='bold')
+        ax2.set_ylabel('Capacity Factor', fontweight='bold')
+        ax2.set_title('Capacity Factor vs. Wind Speed', fontweight='bold')
+        ax2.grid(True, alpha=0.3, linestyle='--')
         st.pyplot(fig2)
     
     with col2b:
         # Cost breakdown
         labels = ['Turbine Cost', 'O&M Cost']
         sizes = [total_investment, total_om_cost * years]
-        colors = ['#1f77b4', '#ff7f0e']
+        colors = ['#3498DB', '#9B59B6']
         
-        fig3, ax3 = plt.subplots(figsize=(8, 4))
-        ax3.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+        fig3, ax3 = plt.subplots(figsize=(8, 4.5))
+        wedges, texts, autotexts = ax3.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', 
+                                           startangle=90, textprops={'fontweight': 'bold'})
+        for autotext in autotexts:
+            autotext.set_color('white')
+            autotext.set_fontweight('bold')
         ax3.axis('equal')
-        ax3.set_title('Cost Breakdown')
+        ax3.set_title('Cost Breakdown', fontweight='bold')
         st.pyplot(fig3)
 
 with col2:
     # Key metrics display
-    st.subheader("Key Performance Indicators")
+    st.markdown('<h3 class="section-header">Key Performance Indicators</h3>', unsafe_allow_html=True)
     
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
     st.markdown('<p class="metric-label">Capacity Factor</p>', unsafe_allow_html=True)
@@ -327,7 +369,7 @@ with col2:
     st.markdown('</div>', unsafe_allow_html=True)
     
     # District comparison
-    st.subheader("District Comparison")
+    st.markdown('<h3 class="section-header">District Comparison</h3>', unsafe_allow_html=True)
     comparison_data = []
     for district, data in district_data.items():
         comparison_data.append({
@@ -337,7 +379,15 @@ with col2:
         })
     
     comparison_df = pd.DataFrame(comparison_data)
-    st.dataframe(comparison_df, use_container_width=True)
+    # Apply styling to the dataframe
+    styled_df = comparison_df.style\
+        .set_properties(**{'background-color': '#E8F8F5', 'color': '#0B5345', 'border': '1px solid #BDC3C7'})\
+        .set_table_styles([{
+            'selector': 'th',
+            'props': [('background-color', '#0B5345'), ('color', 'white'), ('font-weight', 'bold')]
+        }])
+    
+    st.dataframe(styled_df, use_container_width=True, height=300)
 
 # Additional information
 st.markdown("---")
@@ -375,8 +425,8 @@ with expander:
 # Footer
 st.markdown("""
 <p class="footer">
-    © 2025 Wind Energy Analytics Dashboard by Prakarsh| For demonstration purposes only<br>
+    © 2023 Wind Energy Analytics Dashboard | For demonstration purposes only<br>
     Data Sources: National Institute of Wind Energy (NIWE), Ministry of New and Renewable Energy (MNRE), India Meteorological Department (IMD)<br>
-    
+    Last updated: """ + datetime.now().strftime("%Y-%m-%d %H:%M") + """
 </p>
 """, unsafe_allow_html=True)
