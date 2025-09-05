@@ -92,25 +92,6 @@ st.markdown("""
         margin-top: 1.5rem;
         margin-bottom: 1rem;
     }
-    /* Sidebar styling */
-    .css-1d391kg, .css-1v0mbdj, .css-1y4v3va {
-        background-color: #E8F8F5;
-    }
-    /* Button styling */
-    .stButton button {
-        background: linear-gradient(135deg, #0B5345 0%, #1ABC9C 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-weight: 600;
-    }
-    /* Radio button styling */
-    .stRadio > div {
-        background-color: #E8F8F5;
-        padding: 10px;
-        border-radius: 10px;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -379,15 +360,7 @@ with col2:
         })
     
     comparison_df = pd.DataFrame(comparison_data)
-    # Apply styling to the dataframe
-    styled_df = comparison_df.style\
-        .set_properties(**{'background-color': '#E8F8F5', 'color': '#0B5345', 'border': '1px solid #BDC3C7'})\
-        .set_table_styles([{
-            'selector': 'th',
-            'props': [('background-color', '#0B5345'), ('color', 'white'), ('font-weight', 'bold')]
-        }])
-    
-    st.dataframe(styled_df, use_container_width=True, height=300)
+    st.dataframe(comparison_df, use_container_width=True, height=300)
 
 # Additional information
 st.markdown("---")
@@ -425,8 +398,8 @@ with expander:
 # Footer
 st.markdown("""
 <p class="footer">
-    © 2025 Wind Energy Analytics Dashboard by Prakarsh | For demonstration purposes only<br>
+    © 2023 Wind Energy Analytics Dashboard | For demonstration purposes only<br>
     Data Sources: National Institute of Wind Energy (NIWE), Ministry of New and Renewable Energy (MNRE), India Meteorological Department (IMD)<br>
-   
+    Last updated: """ + datetime.now().strftime("%Y-%m-%d %H:%M") + """
 </p>
 """, unsafe_allow_html=True)
