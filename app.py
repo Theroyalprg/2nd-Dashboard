@@ -465,7 +465,7 @@ with expander:
 # Footer
 st.markdown("""
 <p class="footer">
-    © 2023 Wind Energy Analytics Dashboard | Data Sources: NIWE, MNRE, IMD<br>
+    © 2025 Wind Energy Analytics Dashboard by Prakarsh | Data Sources: NIWE, MNRE, IMD<br>
     For informational purposes only. Actual project feasibility requires detailed site assessment.
 </p>
 """, unsafe_allow_html=True)
