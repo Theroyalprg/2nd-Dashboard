@@ -14,102 +14,202 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Updated color scheme - professional blues and greens
+# Modern, professional color scheme with proper contrast
 st.markdown("""
 <style>
+    /* Main background */
+    .stApp {
+        background-color: #0f1a2a;
+        color: #e6e9f0;
+    }
+    
+    /* Headers and text */
     .main-header {
         font-size: 2.8rem;
-        color: #1a4b8c;
+        color: #4fd1c5;
         margin-bottom: 1.5rem;
         padding-bottom: 0.8rem;
-        border-bottom: 3px solid #1a4b8c;
+        border-bottom: 3px solid #4fd1c5;
         font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
+    
+    /* Sidebar styling */
+    .css-1d391kg, .css-1v0mbdj, .css-1y4v3va {
+        background-color: #1a202c !important;
+    }
+    
+    .css-1d391kg p, .css-1v0mbdj p, .css-1y4v3va p {
+        color: #e6e9f0 !important;
+    }
+    
+    /* Metric cards */
     .metric-card {
-        background: linear-gradient(135deg, #1a4b8c 0%, #2e86ab 100%);
+        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
         padding: 1.5rem;
         border-radius: 0.8rem;
         margin-bottom: 1.2rem;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         color: white;
-        border: 1px solid #2e86ab;
+        border: 1px solid #4a5568;
     }
+    
     .metric-value {
         font-size: 2rem;
         font-weight: 800;
-        color: white;
+        color: #4fd1c5;
     }
+    
     .metric-label {
         font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.85);
+        color: #cbd5e0;
         text-transform: uppercase;
         letter-spacing: 1.2px;
         font-weight: 500;
     }
+    
+    /* Section headers */
+    .section-header {
+        color: #4fd1c5;
+        border-left: 5px solid #4fd1c5;
+        padding-left: 12px;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+    
+    /* Footer */
     .footer {
         text-align: center;
         margin-top: 2.5rem;
-        color: #5f6c7c;
+        color: #a0aec0;
         font-size: 0.85rem;
         padding-top: 1.2rem;
-        border-top: 1px solid #90b4ce;
+        border-top: 1px solid #4a5568;
     }
+    
+    /* Sliders */
     .stSlider > div > div > div {
-        background: linear-gradient(90deg, #2e86ab, #1a4b8c);
+        background: linear-gradient(90deg, #4fd1c5, #2c7a7b);
     }
+    
+    /* Wind speed indicator */
     .wind-speed-indicator {
         height: 12px;
-        background: linear-gradient(90deg, #c5e0f3, #2e86ab, #1a4b8c);
+        background: linear-gradient(90deg, #90cdf4, #4fd1c5, #2c7a7b);
         border-radius: 6px;
         margin: 12px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
+    
+    /* District selector */
     .district-selector {
-        background: linear-gradient(135deg, #e0f0ff 0%, #d1e8ff 100%);
+        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
         padding: 1.2rem;
         border-radius: 0.8rem;
         margin-bottom: 1.2rem;
-        border: 1px solid #90b4ce;
+        border: 1px solid #4a5568;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
+    
+    /* Source info */
     .source-info {
         font-size: 0.8rem;
-        color: #5f6c7c;
+        color: #a0aec0;
         font-style: italic;
     }
+    
+    /* Map container */
     .map-container {
         border-radius: 0.8rem;
         overflow: hidden;
         margin-bottom: 1.2rem;
-        border: 1px solid #90b4ce;
+        border: 1px solid #4a5568;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.2);
     }
-    .section-header {
-        color: #1a4b8c;
-        border-left: 5px solid #2e86ab;
-        padding-left: 12px;
-        margin-top: 1.5rem;
-        margin-bottom: 1rem;
-    }
+    
+    /* Calculation boxes */
     .calculation-box {
-        background-color: #f8f9fa;
+        background-color: #2d3748;
         border-radius: 8px;
         padding: 15px;
         margin: 10px 0;
-        border-left: 4px solid #2e86ab;
-        font-family: monospace;
+        border-left: 4px solid #4fd1c5;
+        font-family: 'Courier New', monospace;
         font-size: 0.9rem;
+        color: #e6e9f0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
+    
+    /* Source links */
     .source-link {
-        color: #2e86ab;
+        color: #4fd1c5;
         text-decoration: none;
         font-weight: 500;
     }
+    
     .source-link:hover {
+        color: #38b2ac;
         text-decoration: underline;
     }
+    
+    /* Navigation buttons */
     .nav-button {
-        background-color: #1a4b8c !important;
+        background-color: #2c7a7b !important;
         color: white !important;
-        border: 1px solid #2e86ab !important;
+        border: 1px solid #4fd1c5 !important;
         margin: 5px;
+    }
+    
+    /* Text elements */
+    .stMarkdown, .stText, .stInfo, .stSuccess, .stWarning {
+        color: #e6e9f0;
+    }
+    
+    /* Dataframes */
+    .dataframe {
+        background-color: #2d3748;
+        color: #e6e9f0;
+    }
+    
+    /* Input fields */
+    .stTextInput input, .stNumberInput input, .stSelectbox select {
+        background-color: #2d3748;
+        color: #e6e9f0;
+        border: 1px solid #4a5568;
+    }
+    
+    /* Radio buttons */
+    .stRadio > div {
+        background-color: #2d3748;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #4a5568;
+    }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        background-color: #2d3748;
+        color: #e6e9f0;
+        border: 1px solid #4a5568;
+    }
+    
+    .streamlit-expanderContent {
+        background-color: #2d3748;
+        color: #e6e9f0;
+    }
+    
+    /* Chart background */
+    .css-1y4v3va {
+        background-color: #1a202c;
+    }
+    
+    /* Custom chart styling */
+    .chart-container {
+        background-color: #2d3748;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -213,7 +313,7 @@ if page == "Wind Dashboard":
         
         # Create a map centered on the selected district
         map_center = [district_data[selected_district]["lat"], district_data[selected_district]["lon"]]
-        m = folium.Map(location=map_center, zoom_start=9, tiles="CartoDB positron")
+        m = folium.Map(location=map_center, zoom_start=9, tiles="CartoDB dark_matter")
         
         # Add marker for the selected district
         folium.Marker(
@@ -299,32 +399,37 @@ if page == "Wind Dashboard":
         
         # Create charts with updated color scheme
         fig, ax = plt.subplots(figsize=(10, 6))
-        plt.style.use('default')
+        plt.style.use('dark_background')
+        ax.set_facecolor('#1a202c')
+        fig.patch.set_facecolor('#0f1a2a')
         
         if chart_option == "Energy Output":
-            ax.plot(years_range, cumulative_generation, marker="o", linewidth=2.5, color="#2e86ab", markersize=8)
-            ax.fill_between(years_range, cumulative_generation, alpha=0.3, color="#2e86ab")
-            ax.set_ylabel("Cumulative Energy (MWh)", fontweight='bold')
-            ax.set_title("Projected Energy Output Over Time", fontweight='bold', fontsize=14)
-            ax.grid(True, alpha=0.3, linestyle='--')
+            ax.plot(years_range, cumulative_generation, marker="o", linewidth=2.5, color="#4fd1c5", markersize=8)
+            ax.fill_between(years_range, cumulative_generation, alpha=0.3, color="#4fd1c5")
+            ax.set_ylabel("Cumulative Energy (MWh)", fontweight='bold', color='white')
+            ax.set_title("Projected Energy Output Over Time", fontweight='bold', fontsize=14, color='white')
+            ax.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
+            ax.tick_params(colors='white')
         elif chart_option == "Financial Performance":
-            ax.plot(years_range, cumulative_revenue, marker="s", linewidth=2.5, color="#2e86ab", label="Revenue", markersize=8)
-            ax.axhline(y=total_investment, color="#ef4444", linestyle="--", linewidth=2, label="Initial Investment")
-            ax.fill_between(years_range, cumulative_revenue, alpha=0.3, color="#2e86ab")
-            ax.set_ylabel("Amount (₹)", fontweight='bold')
-            ax.set_title("Financial Performance Over Time", fontweight='bold', fontsize=14)
-            ax.legend()
-            ax.grid(True, alpha=0.3, linestyle='--')
+            ax.plot(years_range, cumulative_revenue, marker="s", linewidth=2.5, color="#4fd1c5", label="Revenue", markersize=8)
+            ax.axhline(y=total_investment, color="#fc8181", linestyle="--", linewidth=2, label="Initial Investment")
+            ax.fill_between(years_range, cumulative_revenue, alpha=0.3, color="#4fd1c5")
+            ax.set_ylabel("Amount (₹)", fontweight='bold', color='white')
+            ax.set_title("Financial Performance Over Time", fontweight='bold', fontsize=14, color='white')
+            ax.legend(facecolor='#2d3748', edgecolor='#4a5568', labelcolor='white')
+            ax.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
+            ax.tick_params(colors='white')
         else:
-            ax.plot(years_range, cumulative_cash_flow, marker="^", linewidth=2.5, color="#2e86ab", markersize=8)
-            ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) >= 0, alpha=0.3, color="#10b981")
-            ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) < 0, alpha=0.3, color="#ef4444")
-            ax.axhline(y=0, color="#ef4444", linestyle="--", linewidth=2)
-            ax.set_ylabel("Net Cash Flow (₹)", fontweight='bold')
-            ax.set_title("Project Cash Flow Over Time", fontweight='bold', fontsize=14)
-            ax.grid(True, alpha=0.3, linestyle='--')
+            ax.plot(years_range, cumulative_cash_flow, marker="^", linewidth=2.5, color="#4fd1c5", markersize=8)
+            ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) >= 0, alpha=0.3, color="#48bb78")
+            ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) < 0, alpha=0.3, color="#fc8181")
+            ax.axhline(y=0, color="#fc8181", linestyle="--", linewidth=2)
+            ax.set_ylabel("Net Cash Flow (₹)", fontweight='bold', color='white')
+            ax.set_title("Project Cash Flow Over Time", fontweight='bold', fontsize=14, color='white')
+            ax.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
+            ax.tick_params(colors='white')
         
-        ax.set_xlabel("Years", fontweight='bold')
+        ax.set_xlabel("Years", fontweight='bold', color='white')
         st.pyplot(fig)
         
         # Additional charts
@@ -337,28 +442,36 @@ if page == "Wind Dashboard":
             cap_factors = [max(0.087 * ws - (turbulence * 0.005), 0) for ws in wind_speeds]
             
             fig2, ax2 = plt.subplots(figsize=(8, 4.5))
-            ax2.plot(wind_speeds, cap_factors, marker='o', color='#2e86ab', linewidth=2.5, markersize=6)
-            ax2.axvline(x=avg_wind_speed, color='#ef4444', linestyle='--', alpha=0.8, linewidth=2)
-            ax2.set_xlabel('Wind Speed (m/s)', fontweight='bold')
-            ax2.set_ylabel('Capacity Factor', fontweight='bold')
-            ax2.set_title('Capacity Factor vs. Wind Speed', fontweight='bold')
-            ax2.grid(True, alpha=0.3, linestyle='--')
+            plt.style.use('dark_background')
+            ax2.set_facecolor('#1a202c')
+            fig2.patch.set_facecolor('#0f1a2a')
+            
+            ax2.plot(wind_speeds, cap_factors, marker='o', color='#4fd1c5', linewidth=2.5, markersize=6)
+            ax2.axvline(x=avg_wind_speed, color='#fc8181', linestyle='--', alpha=0.8, linewidth=2)
+            ax2.set_xlabel('Wind Speed (m/s)', fontweight='bold', color='white')
+            ax2.set_ylabel('Capacity Factor', fontweight='bold', color='white')
+            ax2.set_title('Capacity Factor vs. Wind Speed', fontweight='bold', color='white')
+            ax2.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
+            ax2.tick_params(colors='white')
             st.pyplot(fig2)
         
         with col2b:
             # Cost breakdown
             labels = ['Turbine Cost', 'O&M Cost']
             sizes = [total_investment, total_om_cost * years]
-            colors = ['#2e86ab', '#3b82f6']
+            colors = ['#4fd1c5', '#4299e1']
             
             fig3, ax3 = plt.subplots(figsize=(8, 4.5))
+            plt.style.use('dark_background')
+            fig3.patch.set_facecolor('#0f1a2a')
+            
             wedges, texts, autotexts = ax3.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', 
-                                               startangle=90, textprops={'fontweight': 'bold'})
+                                               startangle=90, textprops={'fontweight': 'bold', 'color': 'white'})
             for autotext in autotexts:
                 autotext.set_color('white')
                 autotext.set_fontweight('bold')
             ax3.axis('equal')
-            ax3.set_title('Cost Breakdown', fontweight='bold')
+            ax3.set_title('Cost Breakdown', fontweight='bold', color='white')
             st.pyplot(fig3)
 
     with col2:
@@ -413,15 +526,7 @@ if page == "Wind Dashboard":
             })
         
         comparison_df = pd.DataFrame(comparison_data)
-        # Apply styling to the dataframe
-        styled_df = comparison_df.style\
-            .set_properties(**{'background-color': '#e0f0ff', 'color': '#1a4b8c', 'border': '1px solid #90b4ce'})\
-            .set_table_styles([{
-                'selector': 'th',
-                'props': [('background-color', '#1a4b8c'), ('color', 'white'), ('font-weight', 'bold')]
-            }])
-        
-        st.dataframe(styled_df, use_container_width=True, height=300)
+        st.dataframe(comparison_df, use_container_width=True, height=300)
         
         # Data sources
         st.markdown('<h3 class="section-header">Data Sources</h3>', unsafe_allow_html=True)
