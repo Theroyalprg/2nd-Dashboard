@@ -576,7 +576,7 @@ elif page == "Data Sources & Information":
     
     st.markdown("""
     <p class="footer">
-        For more information or to provide feedback, please contact the dashboard maintainers.<br>
+        For more information or to provide feedback, please contact at theroyalprg@gmail.com.<br>
         This tool is for preliminary assessment only and should not replace professional feasibility studies.
     </p>
     """, unsafe_allow_html=True)
