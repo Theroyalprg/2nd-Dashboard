@@ -209,14 +209,6 @@ st.markdown("""
         background-color: #1a202c;
     }
     
-    /* Custom chart styling */
-    .chart-container {
-        background-color: #2d3748;
-        padding: 15px;
-        border-radius: 8px;
-        margin: 10px 0;
-    }
-    
     /* Feedback form styling */
     .feedback-form {
         background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
@@ -298,7 +290,7 @@ district_data = {
         "lon": 77.4126,
         "source": "National Institute of Wind Energy (NIWE), Wind Resource Map of India",
         "source_url": "https://niwe.res.in/department_wra_about.php",
-        "wind_potential": 8.2  # in MW per sq.km
+        "wind_potential": 8.2
     },
     "Indore": {
         "wind_speed": 5.7, 
@@ -309,7 +301,7 @@ district_data = {
         "lon": 75.8577,
         "source": "MNRE, Wind Power Potential Assessment in Madhya Pradesh",
         "source_url": "https://mnre.gov.in/wind-energy-potential",
-        "wind_potential": 14.5  # in MW per sq.km
+        "wind_potential": 14.5
     },
     "Jabalpur": {
         "wind_speed": 4.8, 
@@ -320,7 +312,7 @@ district_data = {
         "lon": 79.9864,
         "source": "India Meteorological Department (IMD), Climate of Madhya Pradesh",
         "source_url": "https://mausam.imd.gov.in/",
-        "wind_potential": 9.8  # in MW per sq.km
+        "wind_potential": 9.8
     },
     "Ujjain": {
         "wind_speed": 5.2, 
@@ -331,12 +323,11 @@ district_data = {
         "lon": 75.7849,
         "source": "National Institute of Wind Energy (NIWE), Wind Resource Assessment",
         "source_url": "https://niwe.res.in/department_wra_about.php",
-        "wind_potential": 12.3  # in MW per sq.km
+        "wind_potential": 12.3
     }
 }
 
 if page == "Wind Dashboard":
-    # ... (ALL YOUR EXISTING WIND DASHBOARD CODE REMAINS EXACTLY THE SAME)
     # Header
     st.markdown('<h1 class="main-header">🌬️ Wind Energy Analytics Dashboard - Madhya Pradesh</h1>', unsafe_allow_html=True)
 
@@ -488,268 +479,9 @@ if page == "Wind Dashboard":
             ax.set_ylabel("Amount (₹)", fontweight='bold', color='white')
             ax.set_title("Financial Performance Over Time", fontweight='bold', fontsize=14, color='white')
             ax.legend(facecolor='#2d3748', edgecolor='#4a5568', labelcolor='white')
-            ax.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
+            ax.grid(True, alpha=0.3, linestyle='--', color='4a5568')
             ax.tick_params(colors='white')
         else:
             ax.plot(years_range, cumulative_cash_flow, marker="^", linewidth=2.5, color="#4fd1c5", markersize=8)
             ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) >= 0, alpha=0.3, color="#48bb78")
-            ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) < 0, alpha=0.3, color="#fc8181")
-            ax.axhline(y=0, color="#fc8181", linestyle="--", linewidth=2)
-            ax.set_ylabel("Net Cash Flow (₹)", fontweight='bold', color='white')
-            ax.set_title("Project Cash Flow Over Time", fontweight='bold', fontsize=14, color='white')
-            ax.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
-            ax.tick_params(colors='white')
-        
-        ax.set_xlabel("Years", fontweight='bold', color='white')
-        st.pyplot(fig)
-        
-        # Additional charts
-        st.markdown('<h3 class="section-header">Performance Details</h3>', unsafe_allow_html=True)
-        col1b, col2b = st.columns(2)
-        
-        with col1b:
-            # Capacity factor by wind speed
-            wind_speeds = np.linspace(3, 12, 10)
-            cap_factors = [max(0.087 * ws - (turbulence * 0.005), 0) for ws in wind_speeds]
-            
-            fig2, ax2 = plt.subforms(figsize=(8, 4.5))
-            plt.style.use('dark_background')
-            ax2.set_facecolor('#1a202c')
-            fig2.patch.set_facecolor('#0f1a2a')
-            
-            ax2.plot(wind_speeds, cap_factors, marker='o', color='#4fd1c5', linewidth=2.5, markersize=6)
-            ax2.axvline(x=avg_wind_speed, color='#fc8181', linestyle='--', alpha=0.8, linewidth=2)
-            ax2.set_xlabel('Wind Speed (m/s)', fontweight='bold', color='white')
-            ax2.set_ylabel('Capacity Factor', fontweight='bold', color='white')
-            ax2.set_title('Capacity Factor vs. Wind Speed', fontweight='bold', color='white')
-            ax2.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
-            ax2.tick_params(colors='white')
-            st.pyplot(fig2)
-        
-        with col2b:
-            # Cost breakdown
-            labels = ['Turbine Cost', 'O&M Cost']
-            sizes = [total_investment, total_om_cost * years]
-            colors = ['#4fd1c5', '#4299e1']
-            
-            fig3, ax3 = plt.subplots(figsize=(8, 4.5))
-            plt.style.use('dark_background')
-            fig3.patch.set_facecolor('#0f1a2a')
-            
-            wedges, texts, autotexts = ax3.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', 
-                                               startangle=90, textprops={'fontweight': 'bold', 'color': 'white'})
-            for autotext in autotexts:
-                autotext.set_color('white')
-                autotext.set_fontweight('bold')
-            ax3.axis('equal')
-            ax3.set_title('Cost Breakdown', fontweight='bold', color='white')
-            st.pyplot(fig3)
-
-    with col2:
-        # Key metrics display
-        st.markdown('<h3 class="section-header">Key Performance Indicators</h3>', unsafe_allow_html=True)
-        
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown('<p class="metric-label">Capacity Factor</p>', unsafe_allow_html=True)
-        st.markdown(f'<p class="metric-value">{capacity_factor:.1%}</p>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown('<p class="metric-label">Annual Energy Generation</p>', unsafe_allow_html=True)
-        st.markdown(f'<p class="metric-value">{estimated_annual_generation:,.0f} MWh</p>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown('<p class="metric-label">Total Investment</p>', unsafe_allow_html=True)
-        st.markdown(f'<p class="metric-value">₹ {total_investment:,.0f}</p>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown('<p class="metric-label">Annual Revenue</p>', unsafe_allow_html=True)
-        st.markdown(f'<p class="metric-value">₹ {annual_revenue:,.0f}</p>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown('<p class="metric-label">Net Profit</p>', unsafe_allow_html=True)
-        st.markdown(f'<p class="metric-value">₹ {net_profit:,.0f}</p>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown('<p class="metric-label">ROI</p>', unsafe_allow_html=True)
-        st.markdown(f'<p class="metric-value">{roi:.1f}%</p>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown('<p class="metric-label">Payback Period</p>', unsafe_allow_html=True)
-        payback_display = f"{payback_period:.1f} years" if payback_period != float('inf') else "> Project Lifetime"
-        st.markdown(f'<p class="metric-value">{payback_display}</p>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # District comparison
-        st.markdown('<h3 class="section-header">District Comparison</h3>', unsafe_allow_html=True)
-        comparison_data = []
-        for district, data in district_data.items():
-            comparison_data.append({
-                "District": district,
-                "Wind Speed (m/s)": data["wind_speed"],
-                "Potential": data["potential"],
-                "Wind Potential (MW/sq.km)": data["wind_potential"]
-            })
-        
-        comparison_df = pd.DataFrame(comparison_data)
-        st.dataframe(comparison_df, use_container_width=True, height=300)
-        
-        # Data sources
-        st.markdown('<h3 class="section-header">Data Sources</h3>', unsafe_allow_html=True)
-        st.markdown("""
-        - **National Institute of Wind Energy (NIWE):** [Wind Resource Map of India](https://niwe.res.in/department_wra_about.php)
-        - **Ministry of New and Renewable Energy (MNRE):** [Wind Energy Potential](https://mnre.gov.in/wind-energy-potential)
-        - **India Meteorological Department (IMD):** [Climate Data](https://mausam.imd.gov.in/)
-        - **Madhya Pradesh Energy Department:** [Renewable Energy Policy](https://www.mprenewable.nic.in/)
-        """)
-
-    # Footer
-    st.markdown("""
-    <p class="footer">
-        © 2025 Wind Energy Analytics Dashboard by Prakarsh | Data Sources: NIWE, MNRE, IMD<br>
-        For informational purposes only. Actual project feasibility requires detailed site assessment.
-    </p>
-    """, unsafe_allow_html=True)
-
-elif page == "Data Sources & Information":
-    # ... (ALL YOUR EXISTING DATA SOURCES CODE REMAINS EXACTLY THE SAME)
-    st.markdown('<h1 class="main-header">📚 Data Sources & Methodology</h1>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    ## About This Dashboard
-    
-    This Wind Energy Analytics Dashboard provides comprehensive analysis of wind energy potential 
-    across districts in Madhya Pradesh, India. The tool enables policymakers, investors, and 
-    renewable energy developers to assess the feasibility of wind energy projects in the region.
-    """)
-    
-    st.markdown("---")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown('<h3 class="section-header">Data Sources</h3>', unsafe_allow_html=True)
-        
-        st.markdown("""
-        #### Primary Data Sources:
-        
-        - **National Institute of Wind Energy (NIWE)**
-          - Wind resource assessment data
-          - Technical specifications for wind turbines
-          - Capacity factor calculations
-          - [Website](https://niwe.res.in/)
-        
-        - **Ministry of New and Renewable Energy (MNRE)**
-          - Policy framework data
-          - Subsidy and incentive information
-          - National wind energy targets
-          - [Website](https://mnre.gov.in/)
-        
-        - **India Meteorological Department (IMD)**
-          - Historical wind speed data
-          - Seasonal variation patterns
-          - Climate data for Madhya Pradesh
-          - [Website](https://mausam.imd.gov.in/)
-        
-        - **Madhya Pradesh Energy Department**
-          - State-specific renewable energy policies
-          - Electricity tariff structures
-          - Grid connectivity information
-          - [Website](https://www.mprenewable.nic.in/)
-        """)
-    
-    with col2:
-        st.markdown('<h3 class="section-header">Methodology</h3>', unsafe_allow_html=True)
-        
-        st.markdown("""
-        #### Calculation Methodology:
-        
-        **1. Wind Resource Assessment**
-        - Data collected from NIWE's wind monitoring stations
-        - Annual average wind speeds calculated from 10+ years of data
-        - Height correction applied using power law (α = 0.14)
-        
-        **2. Energy Production Estimation**
-        - Capacity Factor = 0.087 × V_avg - (Turbulence × 0.005)
-        - Annual Generation = Capacity × 8760 hours × Capacity Factor
-        - Based on IEC 61400-12-1 standard for power performance measurements
-        
-        **3. Financial Calculations**
-        - Investment costs based on current market rates for wind turbines
-        - O&M costs estimated at 1.5-2.5% of initial investment annually
-        - Tariff rates based on MPERC's latest renewable energy purchase guidelines
-        - ROI calculated over project lifetime (typically 20-25 years)
-        
-        **4. Technical Assumptions**
-        - Turbine availability: 95%
-        - Electrical losses: 3%
-        - Wake losses: 5-10% (depending on wind farm layout)
-        - Grid availability: 98%
-        """)
-    
-    st.markdown("---")
-    
-    st.markdown('<h3 class="section-header">Limitations & Considerations</h3>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    #### Important Considerations:
-    
-    1. **Site-Specific Variations**
-    - Actual wind resources may vary significantly within a district
-    - Local topography greatly influences wind patterns
-    - Micro-siting is essential for accurate assessment
-    
-    2. **Technology Assumptions**
-    - Calculations based on modern 2-3 MW wind turbines
-    - Capacity factors may vary with turbine technology
-    - Newer turbines may perform better at lower wind speeds
-    
-    3. **Financial Considerations**
-    - Does not account for inflation or financing costs
-    - Land acquisition costs vary by location
-    - Transmission infrastructure costs not included
-    - Government incentives and subsidies may apply
-    
-    4. **Environmental Factors**
-    - Seasonal variations in wind patterns
-    - Climate change impacts on long-term wind resources
-    - Environmental clearance requirements
-    """)
-    
-    st.markdown("---")
-    
-    st.markdown('<h3 class="section-header">Recommended Next Steps</h3>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    For serious project development, we recommend:
-    
-    1. **Site-Specific Assessment**
-    - Install meteorological masts for at least 12 months
-    - Conduct detailed wind resource measurement
-    - Perform micro-siting analysis
-    
-    2. **Feasibility Study**
-    - Detailed technical feasibility assessment
-    - Environmental impact assessment
-    - Grid connectivity study
-    
-    3. **Financial Modeling**
-    - Detailed project cost estimation
-    - Financing options analysis
-    - Risk assessment and mitigation planning
-    
-    4. **Stakeholder Engagement**
-    - Community consultation
-    - Regulatory approvals
-    - Power purchase agreements
-    """)
-    
-    st.markdown("---")
-    
-    st.markdown("""
-    <
+            ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cum
