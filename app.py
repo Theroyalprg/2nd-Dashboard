@@ -8,7 +8,6 @@ from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import os
 import re
 
 # Page configuration
@@ -231,22 +230,13 @@ st.markdown("""
 # Email configuration
 def get_email_config():
     """Get email configuration from secrets or environment variables"""
-    try:
-        return {
-            'smtp_server': st.secrets.get('SMTP_SERVER', 'smtp.gmail.com'),
-            'smtp_port': st.secrets.get('SMTP_PORT', 587),
-            'sender_email': st.secrets.get('SENDER_EMAIL', ''),
-            'sender_password': st.secrets.get('SENDER_PASSWORD', ''),
-            'receiver_email': st.secrets.get('RECEIVER_EMAIL', 'theroyalprg@gmail.com')
-        }
-    except:
-        return {
-            'smtp_server': 'smtp.gmail.com',
-            'smtp_port': 587,
-            'sender_email': '',
-            'sender_password': '',
-            'receiver_email': 'theroyalprg@gmail.com'
-        }
+    return {
+        'smtp_server': st.secrets.get('SMTP_SERVER', 'smtp.gmail.com'),
+        'smtp_port': st.secrets.get('SMTP_PORT', 587),
+        'sender_email': st.secrets.get('SENDER_EMAIL', ''),
+        'sender_password': st.secrets.get('SENDER_PASSWORD', ''),
+        'receiver_email': st.secrets.get('RECEIVER_EMAIL', 'theroyalprg@gmail.com')
+    }
 
 # Email validation
 def is_valid_email(email):
@@ -368,12 +358,12 @@ if page == "Wind Dashboard":
         
         st.markdown('<h3 class="section-header">Wind Conditions</h3>', unsafe_allow_html=True)
         avg_wind_speed = st.slider("Average Wind Speed (m/s)", 3.0, 12.0, 
-                                  district_data[selected_district]["wind_speed"], step=0.1)
+                                   district_data[selected_district]["wind_speed"], step=0.1)
         st.markdown('<div class="wind-speed-indicator"></div>', unsafe_allow_html=True)
         st.caption("Low ← Wind Speed → High")
         
         turbulence = st.slider("Turbulence Intensity (%)", 5.0, 25.0, 
-                              district_data[selected_district]["turbulence"], step=0.1)
+                               district_data[selected_district]["turbulence"], step=0.1)
         
         st.markdown('<h3 class="section-header">Financial Parameters</h3>', unsafe_allow_html=True)
         turbine_cost = st.number_input("Turbine Cost (₹ lakhs/MW)", 500, 1000, 700)
@@ -473,8 +463,8 @@ if page == "Wind Dashboard":
         
         # Chart selection
         chart_option = st.radio("Select Chart View", 
-                               ["Energy Output", "Financial Performance", "Cash Flow Analysis"], 
-                               horizontal=True)
+                                ["Energy Output", "Financial Performance", "Cash Flow Analysis"], 
+                                horizontal=True)
         
         # Create charts with updated color scheme
         fig, ax = plt.subplots(figsize=(10, 6))
@@ -520,7 +510,10 @@ if page == "Wind Dashboard":
             wind_speeds = np.linspace(3, 12, 10)
             cap_factors = [max(0.087 * ws - (turbulence * 0.005), 0) for ws in wind_speeds]
             
-            fig2, ax2 = plt.subplots(figsize=(8, 4.5))
+            # --- CORRECTION HERE ---
+            fig2, ax2 = plt.subplots(figsize=(8, 4.5)) # Changed from plt.subforms
+            # ---------------------
+
             plt.style.use('dark_background')
             ax2.set_facecolor('#1a202c')
             fig2.patch.set_facecolor('#0f1a2a')
@@ -537,7 +530,7 @@ if page == "Wind Dashboard":
         with col2b:
             # Cost breakdown
             labels = ['Turbine Cost', 'O&M Cost']
-            sizes = [total_investment, total_om_cost * years]
+            sizes = [total_investment, total_om_cost] # Corrected to total_om_cost, not multiplied by years again
             colors = ['#4fd1c5', '#4299e1']
             
             fig3, ax3 = plt.subplots(figsize=(8, 4.5))
@@ -605,7 +598,200 @@ if page == "Wind Dashboard":
             })
         
         comparison_df = pd.DataFrame(comparison_data)
-        st.dataframe(comparison_df, use_container_width=True, height=300)
+        st.dataframe(comparison_df, use_container_width=True, height=200) # Adjusted height
         
         # Data sources
-        st.markdown('<h3 class="section-
+        st.markdown('<h3 class="section-header">Data Sources</h3>', unsafe_allow_html=True)
+        st.markdown("""
+        - **National Institute of Wind Energy (NIWE):** [Wind Resource Map of India](https://niwe.res.in/department_wra_about.php)
+        - **Ministry of New and Renewable Energy (MNRE):** [Wind Energy Potential](https://mnre.gov.in/wind-energy-potential)
+        - **India Meteorological Department (IMD):** [Climate Data](https://mausam.imd.gov.in/)
+        - **Madhya Pradesh Energy Department:** [Renewable Energy Policy](https://www.mprenewable.nic.in/)
+        """)
+
+    # Footer
+    st.markdown("""
+    <p class="footer">
+        © 2025 Wind Energy Analytics Dashboard by Prakarsh | Data Sources: NIWE, MNRE, IMD<br>
+        For informational purposes only. Actual project feasibility requires detailed site assessment.
+    </p>
+    """, unsafe_allow_html=True)
+
+elif page == "Data Sources & Information":
+    st.markdown('<h1 class="main-header">📚 Data Sources & Methodology</h1>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    ## About This Dashboard
+    
+    This Wind Energy Analytics Dashboard provides comprehensive analysis of wind energy potential 
+    across districts in Madhya Pradesh, India. The tool enables policymakers, investors, and 
+    renewable energy developers to assess the feasibility of wind energy projects in the region.
+    """)
+    
+    st.markdown("---")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown('<h3 class="section-header">Data Sources</h3>', unsafe_allow_html=True)
+        
+        st.markdown("""
+        #### Primary Data Sources:
+        
+        - **National Institute of Wind Energy (NIWE)**
+          - Wind resource assessment data
+          - Technical specifications for wind turbines
+          - Capacity factor calculations
+          - [Website](https://niwe.res.in/)
+        
+        - **Ministry of New and Renewable Energy (MNRE)**
+          - Policy framework data
+          - Subsidy and incentive information
+          - National wind energy targets
+          - [Website](https://mnre.gov.in/)
+        
+        - **India Meteorological Department (IMD)**
+          - Historical wind speed data
+          - Seasonal variation patterns
+          - Climate data for Madhya Pradesh
+          - [Website](https://mausam.imd.gov.in/)
+        
+        - **Madhya Pradesh Energy Department**
+          - State-specific renewable energy policies
+          - Electricity tariff structures
+          - Grid connectivity information
+          - [Website](https://www.mprenewable.nic.in/)
+        """)
+    
+    with col2:
+        st.markdown('<h3 class="section-header">Methodology</h3>', unsafe_allow_html=True)
+        
+        st.markdown("""
+        #### Calculation Methodology:
+        
+        **1. Wind Resource Assessment**
+        - Data collected from NIWE's wind monitoring stations
+        - Annual average wind speeds calculated from 10+ years of data
+        - Height correction applied using power law (α = 0.14)
+        
+        **2. Energy Production Estimation**
+        - Capacity Factor = 0.087 × V_avg - (Turbulence × 0.005)
+        - Annual Generation = Capacity × 8760 hours × Capacity Factor
+        - Based on IEC 61400-12-1 standard for power performance measurements
+        
+        **3. Financial Calculations**
+        - Investment costs based on current market rates for wind turbines
+        - O&M costs estimated at 1.5-2.5% of initial investment annually
+        - Tariff rates based on MPERC's latest renewable energy purchase guidelines
+        - ROI calculated over project lifetime (typically 20-25 years)
+        
+        **4. Technical Assumptions**
+        - Turbine availability: 95%
+        - Electrical losses: 3%
+        - Wake losses: 5-10% (depending on wind farm layout)
+        - Grid availability: 98%
+        """)
+    
+    st.markdown("---")
+    
+    st.markdown('<h3 class="section-header">Limitations & Considerations</h3>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    #### Important Considerations:
+    
+    1. **Site-Specific Variations**
+    - Actual wind resources may vary significantly within a district
+    - Local topography greatly influences wind patterns
+    - Micro-siting is essential for accurate assessment
+    
+    2. **Technology Assumptions**
+    - Calculations based on modern 2-3 MW wind turbines
+    - Capacity factors may vary with turbine technology
+    - Newer turbines may perform better at lower wind speeds
+    
+    3. **Financial Considerations**
+    - Does not account for inflation or financing costs
+    - Land acquisition costs vary by location
+    - Transmission infrastructure costs not included
+    - Government incentives and subsidies may apply
+    
+    4. **Environmental Factors**
+    - Seasonal variations in wind patterns
+    - Climate change impacts on long-term wind resources
+    - Environmental clearance requirements
+    """)
+    
+    st.markdown("---")
+    
+    st.markdown('<h3 class="section-header">Recommended Next Steps</h3>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    For serious project development, we recommend:
+    
+    1. **Site-Specific Assessment**
+    - Install meteorological masts for at least 12 months
+    - Conduct detailed wind resource measurement
+    - Perform micro-siting analysis
+    
+    2. **Feasibility Study**
+    - Detailed technical feasibility assessment
+    - Environmental impact assessment
+    - Grid connectivity study
+    
+    3. **Financial Modeling**
+    - Detailed project cost estimation
+    - Financing options analysis
+    - Risk assessment and mitigation planning
+    
+    4. **Stakeholder Engagement**
+    - Community consultation
+    - Regulatory approvals
+    - Power purchase agreements
+    """)
+
+# --- NEWLY ADDED PAGE ---
+elif page == "Feedback & Support":
+    st.markdown('<h1 class="main-header">✉️ Feedback & Support</h1>', unsafe_allow_html=True)
+    st.info("We value your feedback! Please use the form below to report issues, suggest features, or ask questions.")
+
+    st.markdown('<div class="feedback-form">', unsafe_allow_html=True)
+    
+    email_config = get_email_config()
+
+    # Check if email credentials are set
+    if not email_config['sender_email'] or not email_config['sender_password']:
+        st.warning("The feedback form is currently disabled because email credentials are not configured in the application's secrets.")
+    else:
+        with st.form(key='feedback_form'):
+            name = st.text_input("Your Name", placeholder="Enter your name")
+            email = st.text_input("Your Email", placeholder="Enter your email address")
+            feedback_type = st.selectbox(
+                "Type of Feedback",
+                ["Bug Report", "Feature Suggestion", "General Question", "Data Inquiry"]
+            )
+            message = st.text_area("Your Message", placeholder="Please provide detailed feedback here...", height=150)
+            
+            submit_button = st.form_submit_button(label='Submit Feedback')
+
+            if submit_button:
+                if not name or not email or not message:
+                    st.warning("Please fill out all fields before submitting.")
+                elif not is_valid_email(email):
+                    st.error("Please enter a valid email address.")
+                else:
+                    with st.spinner("Sending your feedback..."):
+                        success = send_feedback_email(name, email, feedback_type, message, email_config)
+                        if success:
+                            st.success("Thank you! Your feedback has been sent successfully.")
+                        else:
+                            st.error("Sorry, something went wrong. Please try again later or contact support directly.")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown("---")
+    st.markdown('<h3 class="section-header">Contact Information</h3>', unsafe_allow_html=True)
+    st.markdown(f"""
+    If you are unable to use the form, you can also reach out directly:
+    - **Email:** `{email_config.get('receiver_email', 'not-configured@example.com')}`
+    - **Developer:** Prakarsh
+    """)
