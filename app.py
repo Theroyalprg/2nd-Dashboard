@@ -209,6 +209,14 @@ st.markdown("""
         background-color: #1a202c;
     }
     
+    /* Custom chart styling */
+    .chart-container {
+        background-color: #2d3748;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+    }
+    
     /* Feedback form styling */
     .feedback-form {
         background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
@@ -223,13 +231,22 @@ st.markdown("""
 # Email configuration
 def get_email_config():
     """Get email configuration from secrets or environment variables"""
-    return {
-        'smtp_server': st.secrets.get('SMTP_SERVER', 'smtp.gmail.com'),
-        'smtp_port': st.secrets.get('SMTP_PORT', 587),
-        'sender_email': st.secrets.get('SENDER_EMAIL', ''),
-        'sender_password': st.secrets.get('SENDER_PASSWORD', ''),
-        'receiver_email': st.secrets.get('RECEIVER_EMAIL', 'theroyalprg@gmail.com')
-    }
+    try:
+        return {
+            'smtp_server': st.secrets.get('SMTP_SERVER', 'smtp.gmail.com'),
+            'smtp_port': st.secrets.get('SMTP_PORT', 587),
+            'sender_email': st.secrets.get('SENDER_EMAIL', ''),
+            'sender_password': st.secrets.get('SENDER_PASSWORD', ''),
+            'receiver_email': st.secrets.get('RECEIVER_EMAIL', 'theroyalprg@gmail.com')
+        }
+    except:
+        return {
+            'smtp_server': 'smtp.gmail.com',
+            'smtp_port': 587,
+            'sender_email': '',
+            'sender_password': '',
+            'receiver_email': 'theroyalprg@gmail.com'
+        }
 
 # Email validation
 def is_valid_email(email):
@@ -276,7 +293,7 @@ def send_feedback_email(name, email, feedback_type, message, config):
         st.error(f"Error sending email: {str(e)}")
         return False
 
-# Navigation - ADD FEEDBACK PAGE
+# Navigation
 page = st.sidebar.selectbox("Navigate", ["Wind Dashboard", "Data Sources & Information", "Feedback & Support"])
 
 # District data with verified sources
@@ -290,7 +307,7 @@ district_data = {
         "lon": 77.4126,
         "source": "National Institute of Wind Energy (NIWE), Wind Resource Map of India",
         "source_url": "https://niwe.res.in/department_wra_about.php",
-        "wind_potential": 8.2
+        "wind_potential": 8.2  # in MW per sq.km
     },
     "Indore": {
         "wind_speed": 5.7, 
@@ -301,7 +318,7 @@ district_data = {
         "lon": 75.8577,
         "source": "MNRE, Wind Power Potential Assessment in Madhya Pradesh",
         "source_url": "https://mnre.gov.in/wind-energy-potential",
-        "wind_potential": 14.5
+        "wind_potential": 14.5  # in MW per sq.km
     },
     "Jabalpur": {
         "wind_speed": 4.8, 
@@ -312,7 +329,7 @@ district_data = {
         "lon": 79.9864,
         "source": "India Meteorological Department (IMD), Climate of Madhya Pradesh",
         "source_url": "https://mausam.imd.gov.in/",
-        "wind_potential": 9.8
+        "wind_potential": 9.8  # in MW per sq.km
     },
     "Ujjain": {
         "wind_speed": 5.2, 
@@ -323,7 +340,7 @@ district_data = {
         "lon": 75.7849,
         "source": "National Institute of Wind Energy (NIWE), Wind Resource Assessment",
         "source_url": "https://niwe.res.in/department_wra_about.php",
-        "wind_potential": 12.3
+        "wind_potential": 12.3  # in MW per sq.km
     }
 }
 
@@ -479,9 +496,116 @@ if page == "Wind Dashboard":
             ax.set_ylabel("Amount (₹)", fontweight='bold', color='white')
             ax.set_title("Financial Performance Over Time", fontweight='bold', fontsize=14, color='white')
             ax.legend(facecolor='#2d3748', edgecolor='#4a5568', labelcolor='white')
-            ax.grid(True, alpha=0.3, linestyle='--', color='4a5568')
+            ax.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
             ax.tick_params(colors='white')
         else:
             ax.plot(years_range, cumulative_cash_flow, marker="^", linewidth=2.5, color="#4fd1c5", markersize=8)
             ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) >= 0, alpha=0.3, color="#48bb78")
-            ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cum
+            ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) < 0, alpha=0.3, color="#fc8181")
+            ax.axhline(y=0, color="#fc8181", linestyle="--", linewidth=2)
+            ax.set_ylabel("Net Cash Flow (₹)", fontweight='bold', color='white')
+            ax.set_title("Project Cash Flow Over Time", fontweight='bold', fontsize=14, color='white')
+            ax.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
+            ax.tick_params(colors='white')
+        
+        ax.set_xlabel("Years", fontweight='bold', color='white')
+        st.pyplot(fig)
+        
+        # Additional charts
+        st.markdown('<h3 class="section-header">Performance Details</h3>', unsafe_allow_html=True)
+        col1b, col2b = st.columns(2)
+        
+        with col1b:
+            # Capacity factor by wind speed
+            wind_speeds = np.linspace(3, 12, 10)
+            cap_factors = [max(0.087 * ws - (turbulence * 0.005), 0) for ws in wind_speeds]
+            
+            fig2, ax2 = plt.subplots(figsize=(8, 4.5))
+            plt.style.use('dark_background')
+            ax2.set_facecolor('#1a202c')
+            fig2.patch.set_facecolor('#0f1a2a')
+            
+            ax2.plot(wind_speeds, cap_factors, marker='o', color='#4fd1c5', linewidth=2.5, markersize=6)
+            ax2.axvline(x=avg_wind_speed, color='#fc8181', linestyle='--', alpha=0.8, linewidth=2)
+            ax2.set_xlabel('Wind Speed (m/s)', fontweight='bold', color='white')
+            ax2.set_ylabel('Capacity Factor', fontweight='bold', color='white')
+            ax2.set_title('Capacity Factor vs. Wind Speed', fontweight='bold', color='white')
+            ax2.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
+            ax2.tick_params(colors='white')
+            st.pyplot(fig2)
+        
+        with col2b:
+            # Cost breakdown
+            labels = ['Turbine Cost', 'O&M Cost']
+            sizes = [total_investment, total_om_cost * years]
+            colors = ['#4fd1c5', '#4299e1']
+            
+            fig3, ax3 = plt.subplots(figsize=(8, 4.5))
+            plt.style.use('dark_background')
+            fig3.patch.set_facecolor('#0f1a2a')
+            
+            wedges, texts, autotexts = ax3.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', 
+                                               startangle=90, textprops={'fontweight': 'bold', 'color': 'white'})
+            for autotext in autotexts:
+                autotext.set_color('white')
+                autotext.set_fontweight('bold')
+            ax3.axis('equal')
+            ax3.set_title('Cost Breakdown', fontweight='bold', color='white')
+            st.pyplot(fig3)
+
+    with col2:
+        # Key metrics display
+        st.markdown('<h3 class="section-header">Key Performance Indicators</h3>', unsafe_allow_html=True)
+        
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.markdown('<p class="metric-label">Capacity Factor</p>', unsafe_allow_html=True)
+        st.markdown(f'<p class="metric-value">{capacity_factor:.1%}</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.markdown('<p class="metric-label">Annual Energy Generation</p>', unsafe_allow_html=True)
+        st.markdown(f'<p class="metric-value">{estimated_annual_generation:,.0f} MWh</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.markdown('<p class="metric-label">Total Investment</p>', unsafe_allow_html=True)
+        st.markdown(f'<p class="metric-value">₹ {total_investment:,.0f}</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.markdown('<p class="metric-label">Annual Revenue</p>', unsafe_allow_html=True)
+        st.markdown(f'<p class="metric-value">₹ {annual_revenue:,.0f}</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.markdown('<p class="metric-label">Net Profit</p>', unsafe_allow_html=True)
+        st.markdown(f'<p class="metric-value">₹ {net_profit:,.0f}</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.markdown('<p class="metric-label">ROI</p>', unsafe_allow_html=True)
+        st.markdown(f'<p class="metric-value">{roi:.1f}%</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.markdown('<p class="metric-label">Payback Period</p>', unsafe_allow_html=True)
+        payback_display = f"{payback_period:.1f} years" if payback_period != float('inf') else "> Project Lifetime"
+        st.markdown(f'<p class="metric-value">{payback_display}</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # District comparison
+        st.markdown('<h3 class="section-header">District Comparison</h3>', unsafe_allow_html=True)
+        comparison_data = []
+        for district, data in district_data.items():
+            comparison_data.append({
+                "District": district,
+                "Wind Speed (m/s)": data["wind_speed"],
+                "Potential": data["potential"],
+                "Wind Potential (MW/sq.km)": data["wind_potential"]
+            })
+        
+        comparison_df = pd.DataFrame(comparison_data)
+        st.dataframe(comparison_df, use_container_width=True, height=300)
+        
+        # Data sources
+        st.markdown('<h3 class="section-
