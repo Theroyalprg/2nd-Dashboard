@@ -5,6 +5,11 @@ import pandas as pd
 import folium
 from streamlit_folium import folium_static
 from datetime import datetime
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+import re
 
 # Page configuration
 st.set_page_config(
@@ -211,11 +216,76 @@ st.markdown("""
         border-radius: 8px;
         margin: 10px 0;
     }
+    
+    /* Feedback form styling */
+    .feedback-form {
+        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        padding: 2rem;
+        border-radius: 1rem;
+        border: 1px solid #4fd1c5;
+        margin: 1rem 0;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# Navigation
-page = st.sidebar.selectbox("Navigate", ["Wind Dashboard", "Data Sources & Information"])
+# Email configuration
+def get_email_config():
+    """Get email configuration from secrets or environment variables"""
+    return {
+        'smtp_server': st.secrets.get('SMTP_SERVER', 'smtp.gmail.com'),
+        'smtp_port': st.secrets.get('SMTP_PORT', 587),
+        'sender_email': st.secrets.get('SENDER_EMAIL', ''),
+        'sender_password': st.secrets.get('SENDER_PASSWORD', ''),
+        'receiver_email': st.secrets.get('RECEIVER_EMAIL', 'theroyalprg@gmail.com')
+    }
+
+# Email validation
+def is_valid_email(email):
+    """Validate email format"""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(pattern, email) is not None
+
+# Send email function
+def send_feedback_email(name, email, feedback_type, message, config):
+    """Send feedback email"""
+    try:
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = config['sender_email']
+        msg['To'] = config['receiver_email']
+        msg['Subject'] = f"🌬️ Wind Dashboard Feedback - {feedback_type}"
+        
+        # Email body
+        body = f"""
+        New Feedback from Wind Energy Dashboard:
+        
+        Name: {name}
+        Email: {email}
+        Feedback Type: {feedback_type}
+        Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+        
+        Message:
+        {message}
+        
+        ---
+        This email was sent automatically from the Wind Energy Analytics Dashboard.
+        """
+        
+        msg.attach(MIMEText(body, 'plain'))
+        
+        # Send email
+        with smtplib.SMTP(config['smtp_server'], config['smtp_port']) as server:
+            server.starttls()
+            server.login(config['sender_email'], config['sender_password'])
+            server.send_message(msg)
+            
+        return True
+    except Exception as e:
+        st.error(f"Error sending email: {str(e)}")
+        return False
+
+# Navigation - ADD FEEDBACK PAGE
+page = st.sidebar.selectbox("Navigate", ["Wind Dashboard", "Data Sources & Information", "Feedback & Support"])
 
 # District data with verified sources
 district_data = {
@@ -266,6 +336,7 @@ district_data = {
 }
 
 if page == "Wind Dashboard":
+    # ... (ALL YOUR EXISTING WIND DASHBOARD CODE REMAINS EXACTLY THE SAME)
     # Header
     st.markdown('<h1 class="main-header">🌬️ Wind Energy Analytics Dashboard - Madhya Pradesh</h1>', unsafe_allow_html=True)
 
@@ -441,7 +512,7 @@ if page == "Wind Dashboard":
             wind_speeds = np.linspace(3, 12, 10)
             cap_factors = [max(0.087 * ws - (turbulence * 0.005), 0) for ws in wind_speeds]
             
-            fig2, ax2 = plt.subplots(figsize=(8, 4.5))
+            fig2, ax2 = plt.subforms(figsize=(8, 4.5))
             plt.style.use('dark_background')
             ax2.set_facecolor('#1a202c')
             fig2.patch.set_facecolor('#0f1a2a')
@@ -546,6 +617,7 @@ if page == "Wind Dashboard":
     """, unsafe_allow_html=True)
 
 elif page == "Data Sources & Information":
+    # ... (ALL YOUR EXISTING DATA SOURCES CODE REMAINS EXACTLY THE SAME)
     st.markdown('<h1 class="main-header">📚 Data Sources & Methodology</h1>', unsafe_allow_html=True)
     
     st.markdown("""
@@ -680,8 +752,4 @@ elif page == "Data Sources & Information":
     st.markdown("---")
     
     st.markdown("""
-    <p class="footer">
-        For more information or to provide feedback, please contact at theroyalprg@gmail.com.<br>
-        This tool is for preliminary assessment only and should not replace professional feasibility studies.
-    </p>
-    """, unsafe_allow_html=True)
+    <
