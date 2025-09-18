@@ -594,7 +594,6 @@ elif page == "Data Sources & Information":
     st.markdown("### 🛰️ Primary Data Sources")
     st.write("The credibility of our analysis depends on the quality of our data. We use only verified, publicly available data from the following government and international agencies.")
 
-    # --- Using columns for a cleaner list of sources ---
     col1, col2 = st.columns(2)
 
     with col1:
@@ -654,8 +653,7 @@ elif page == "Data Sources & Information":
         st.code(
             f"CF = (0.087 * {district_data['Indore']['wind_speed']}) - ({district_data['Indore']['turbulence']} * 0.005)\n"
             f"CF = {0.087 * district_data['Indore']['wind_speed']:.3f} - {district_data['Indore']['turbulence'] * 0.005:.3f}\n"
-            # --- DEBUG: Fixed invalid escape sequence by changing \ to \\ ---
-            f"CF = {0.087 * district_data['Indore']['wind_speed'] - district_data['Indore']['turbulence'] * 0.005:.3f} \\text{{ or }} { (0.087 * district_data['Indore']['wind_speed'] - district_data['Indore']['turbulence'] * 0.005) * 100:.1f}\%",
+            f"CF = {0.087 * district_data['Indore']['wind_speed'] - district_data['Indore']['turbulence'] * 0.005:.3f} or { (0.087 * district_data['Indore']['wind_speed'] - district_data['Indore']['turbulence'] * 0.005) * 100:.1f}%",
             language='python'
         )
 
@@ -674,8 +672,9 @@ elif page == "Data Sources & Information":
         st.markdown("#### **Example Calculation (2.5 MW Turbine in Indore):**")
         st.write("Using the Capacity Factor of 0.439 calculated above:")
         st.code(
+            # --- DEBUG: Fixed invalid syntax by removing \text{} wrapper ---
             f"AEP = 2.5 MW * 8760 hours * 0.439\n"
-            f"AEP = {2.5 * 8760 * 0.439:,.0f} \text{ MWh per year}",
+            f"AEP = {2.5 * 8760 * 0.439:,.0f} MWh per year",
             language='python'
         )
 
