@@ -224,6 +224,24 @@ st.markdown("""
         border: 1px solid #4fd1c5;
         margin: 1rem 0;
     }
+    
+    /* Google Form iframe styling */
+    .google-form-container {
+        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        padding: 2rem;
+        border-radius: 1rem;
+        border: 1px solid #4fd1c5;
+        margin: 1rem 0;
+        text-align: center;
+    }
+    
+    .google-form-container iframe {
+        width: 100%;
+        height: 1200px;
+        border: none;
+        border-radius: 8px;
+        background-color: white;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -510,10 +528,7 @@ if page == "Wind Dashboard":
             wind_speeds = np.linspace(3, 12, 10)
             cap_factors = [max(0.087 * ws - (turbulence * 0.005), 0) for ws in wind_speeds]
             
-            # --- CORRECTION HERE ---
-            fig2, ax2 = plt.subplots(figsize=(8, 4.5)) # Changed from plt.subforms
-            # ---------------------
-
+            fig2, ax2 = plt.subplots(figsize=(8, 4.5))
             plt.style.use('dark_background')
             ax2.set_facecolor('#1a202c')
             fig2.patch.set_facecolor('#0f1a2a')
@@ -530,7 +545,7 @@ if page == "Wind Dashboard":
         with col2b:
             # Cost breakdown
             labels = ['Turbine Cost', 'O&M Cost']
-            sizes = [total_investment, total_om_cost] # Corrected to total_om_cost, not multiplied by years again
+            sizes = [total_investment, total_om_cost]
             colors = ['#4fd1c5', '#4299e1']
             
             fig3, ax3 = plt.subplots(figsize=(8, 4.5))
@@ -598,7 +613,7 @@ if page == "Wind Dashboard":
             })
         
         comparison_df = pd.DataFrame(comparison_data)
-        st.dataframe(comparison_df, use_container_width=True, height=200) # Adjusted height
+        st.dataframe(comparison_df, use_container_width=True, height=200)
         
         # Data sources
         st.markdown('<h3 class="section-header">Data Sources</h3>', unsafe_allow_html=True)
@@ -735,63 +750,3 @@ elif page == "Data Sources & Information":
     
     2. **Feasibility Study**
     - Detailed technical feasibility assessment
-    - Environmental impact assessment
-    - Grid connectivity study
-    
-    3. **Financial Modeling**
-    - Detailed project cost estimation
-    - Financing options analysis
-    - Risk assessment and mitigation planning
-    
-    4. **Stakeholder Engagement**
-    - Community consultation
-    - Regulatory approvals
-    - Power purchase agreements
-    """)
-
-# --- NEWLY ADDED PAGE ---
-elif page == "Feedback & Support":
-    st.markdown('<h1 class="main-header">✉️ Feedback & Support</h1>', unsafe_allow_html=True)
-    st.info("We value your feedback! Please use the form below to report issues, suggest features, or ask questions.")
-
-    st.markdown('<div class="feedback-form">', unsafe_allow_html=True)
-    
-    email_config = get_email_config()
-
-    # Check if email credentials are set
-    if not email_config['sender_email'] or not email_config['sender_password']:
-        st.warning("The feedback form is currently disabled because email credentials are not configured in the application's secrets.")
-    else:
-        with st.form(key='feedback_form'):
-            name = st.text_input("Your Name", placeholder="Enter your name")
-            email = st.text_input("Your Email", placeholder="Enter your email address")
-            feedback_type = st.selectbox(
-                "Type of Feedback",
-                ["Bug Report", "Feature Suggestion", "General Question", "Data Inquiry"]
-            )
-            message = st.text_area("Your Message", placeholder="Please provide detailed feedback here...", height=150)
-            
-            submit_button = st.form_submit_button(label='Submit Feedback')
-
-            if submit_button:
-                if not name or not email or not message:
-                    st.warning("Please fill out all fields before submitting.")
-                elif not is_valid_email(email):
-                    st.error("Please enter a valid email address.")
-                else:
-                    with st.spinner("Sending your feedback..."):
-                        success = send_feedback_email(name, email, feedback_type, message, email_config)
-                        if success:
-                            st.success("Thank you! Your feedback has been sent successfully.")
-                        else:
-                            st.error("Sorry, something went wrong. Please try again later or contact support directly.")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown("---")
-    st.markdown('<h3 class="section-header">Contact Information</h3>', unsafe_allow_html=True)
-    st.markdown(f"""
-    If you are unable to use the form, you can also reach out directly:
-    - **Email:** `{email_config.get('receiver_email', 'not-configured@example.com')}`
-    - **Developer:** Prakarsh
-    """)
