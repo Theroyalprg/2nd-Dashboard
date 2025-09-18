@@ -695,15 +695,16 @@ elif page == "Data Sources & Information":
     """
     )
 
-# <-- 3. ADDED THE ENTIRE AI ASSISTANT PAGE LOGIC HERE -->
+# Replace your existing "AI Assistant" block with this one
+
 elif page == "AI Assistant":
     st.markdown('<h1 class="main-header">🤖 AI Assistant for Wind Energy</h1>', unsafe_allow_html=True)
-    st.info("Ask a question about wind energy, technology, or policy. This assistant uses a free, open-source model from Hugging Face.")
+    st.info("Ask a question about wind energy, technology, or policy. Improvements are currently underway.")
 
     # --- Hugging Face Configuration ---
-    API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+    # UPDATED to a more reliable model on the free tier
+    API_URL = "https://api-inference.huggingface.co/models/google/gemma-7b-it" 
     
-    # Check if the secret is available
     if 'HF_TOKEN' in st.secrets:
         headers = {"Authorization": f"Bearer {st.secrets['HF_TOKEN']}"}
     else:
@@ -722,16 +723,16 @@ elif page == "AI Assistant":
             with st.spinner("Querying the AI model... This may take a moment on the first run."):
                 try:
                     response = query_model({
-                        "inputs": f"Question: {user_prompt}\n\nAnswer:",
-                        "parameters": {"max_new_tokens": 250} # Limit response length
+                        "inputs": user_prompt, # Simpler prompt for Gemma
+                        "parameters": {"max_new_tokens": 250}
                     })
                     
                     if response.status_code == 200:
                         output = response.json()
                         if isinstance(output, list) and 'generated_text' in output[0]:
                             generated_text = output[0]['generated_text']
-                            # Clean up the response to only show the answer
-                            answer = generated_text.split("Answer:")[-1].strip()
+                            # Clean up the response by removing the initial prompt if it's included
+                            answer = generated_text.replace(user_prompt, "").strip()
                             st.markdown("### Answer:")
                             st.write(answer)
                         elif 'error' in output:
