@@ -721,7 +721,7 @@ Net Profit = (Annual Revenue * Lifetime) - Total Investment - (Annual O&M Cost *
 # --- ADDED AI ASSISTANT PAGE ---
 elif page == "AI Assistant":
     st.markdown('<h1 class="main-header">🤖 AI Assistant for Wind Energy</h1>', unsafe_allow_html=True)
-    st.info("Ask a question about wind energy, technology, or policy. This assistant uses a free, open-source model from Hugging Face.")
+    st.info("Ask a question about wind energy, technology, or policy. Improvements are currently underway.")
 
     API_URL = "https://api-inference.huggingface.co/models/google/gemma-7b-it" 
     
