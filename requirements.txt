@@ -7,3 +7,4 @@ streamlit-folium
 markdown-it-py
 Pygments
 rich
+requests 
