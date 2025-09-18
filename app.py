@@ -584,8 +584,7 @@ elif page == "Tableau Dashboard":
     
     components.html(embed_code, height=825, scrolling=True)
 
-# --- YOUR ORIGINAL DATA SOURCES PAGE (UNCHANGED) ---
-# === CODE UPDATE: The entire "Data Sources & Information" page has been replaced ===
+#data source page
 
 elif page == "Data Sources & Information":
     st.markdown('<h1 class="main-header">📚 Data Sources & Detailed Methodology</h1>', unsafe_allow_html=True)
@@ -655,7 +654,8 @@ elif page == "Data Sources & Information":
         st.code(
             f"CF = (0.087 * {district_data['Indore']['wind_speed']}) - ({district_data['Indore']['turbulence']} * 0.005)\n"
             f"CF = {0.087 * district_data['Indore']['wind_speed']:.3f} - {district_data['Indore']['turbulence'] * 0.005:.3f}\n"
-            f"CF = {0.087 * district_data['Indore']['wind_speed'] - district_data['Indore']['turbulence'] * 0.005:.3f} \text{ or } { (0.087 * district_data['Indore']['wind_speed'] - district_data['Indore']['turbulence'] * 0.005) * 100:.1f}\%",
+            # --- DEBUG: Fixed invalid escape sequence by changing \ to \\ ---
+            f"CF = {0.087 * district_data['Indore']['wind_speed'] - district_data['Indore']['turbulence'] * 0.005:.3f} \\text{{ or }} { (0.087 * district_data['Indore']['wind_speed'] - district_data['Indore']['turbulence'] * 0.005) * 100:.1f}\%",
             language='python'
         )
 
@@ -719,7 +719,6 @@ Net Profit = (Annual Revenue * Lifetime) - Total Investment - (Annual O&M Cost *
         st.latex(r'''
         \text{Payback Period (years)} = \frac{\text{Total Investment}}{\text{Annual Revenue} - \text{Annual O&M Cost}}
         ''')
-
 # --- ADDED AI ASSISTANT PAGE ---
 elif page == "AI Assistant":
     st.markdown('<h1 class="main-header">🤖 AI Assistant for Wind Energy</h1>', unsafe_allow_html=True)
