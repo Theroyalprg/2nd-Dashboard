@@ -224,36 +224,18 @@ st.markdown("""
         border: 1px solid #4fd1c5;
         margin: 1rem 0;
     }
-    
-    /* Google Form iframe styling */
-    .google-form-container {
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-        padding: 2rem;
-        border-radius: 1rem;
-        border: 1px solid #4fd1c5;
-        margin: 1rem 0;
-        text-align: center;
-    }
-    
-    .google-form-container iframe {
-        width: 100%;
-        height: 1200px;
-        border: none;
-        border-radius: 8px;
-        background-color: white;
-    }
 </style>
 """, unsafe_allow_html=True)
 
 # Email configuration
 def get_email_config():
-    """Get email configuration from secrets or environment variables"""
+    """Get email configuration from secrets"""
     return {
         'smtp_server': st.secrets.get('SMTP_SERVER', 'smtp.gmail.com'),
         'smtp_port': st.secrets.get('SMTP_PORT', 587),
         'sender_email': st.secrets.get('SENDER_EMAIL', ''),
         'sender_password': st.secrets.get('SENDER_PASSWORD', ''),
-        'receiver_email': st.secrets.get('RECEIVER_EMAIL', 'theroyalprg@gmail.com')
+        'receiver_email': st.secrets.get('RECEIVER_EMAIL', '') # Fallback to empty to avoid sending to wrong address
     }
 
 # Email validation
@@ -265,6 +247,9 @@ def is_valid_email(email):
 # Send email function
 def send_feedback_email(name, email, feedback_type, message, config):
     """Send feedback email"""
+    if not all([config['sender_email'], config['sender_password'], config['receiver_email']]):
+        st.error("Email configuration is missing in secrets. Please contact the administrator.")
+        return False
     try:
         # Create message
         msg = MIMEMultipart()
@@ -298,7 +283,7 @@ def send_feedback_email(name, email, feedback_type, message, config):
             
         return True
     except Exception as e:
-        st.error(f"Error sending email: {str(e)}")
+        st.error(f"Error sending email: {str(e)}. Check your credentials and server settings.")
         return False
 
 # Navigation
@@ -740,6 +725,7 @@ elif page == "Data Sources & Information":
     
     st.markdown('<h3 class="section-header">Recommended Next Steps</h3>', unsafe_allow_html=True)
     
+    # === CODE FIX: Completed the previously cut-off markdown block ===
     st.markdown("""
     For serious project development, we recommend:
     
@@ -750,3 +736,47 @@ elif page == "Data Sources & Information":
     
     2. **Feasibility Study**
     - Detailed technical feasibility assessment
+    - Comprehensive financial modeling including financing, taxes, and depreciation
+    - Environmental Impact Assessment (EIA)
+    
+    3. **Consult with Experts**
+    - Engage with wind energy consultants and local authorities
+    - Secure necessary permits and land rights
+    """)
+
+# === CODE ADDITION: Added the entire missing "Feedback & Support" page logic ===
+elif page == "Feedback & Support":
+    st.markdown('<h1 class="main-header">📬 Feedback & Support</h1>', unsafe_allow_html=True)
+    
+    st.info("We value your feedback! Please use the form below to report issues, suggest features, or ask questions.")
+    
+    # Get email config
+    email_config = get_email_config()
+
+    st.markdown('<div class="feedback-form">', unsafe_allow_html=True)
+    
+    with st.form(key="feedback_form"):
+        name = st.text_input("Your Name", placeholder="Enter your full name")
+        email = st.text_input("Your Email", placeholder="Enter a valid email address")
+        feedback_type = st.selectbox(
+            "Type of Feedback",
+            ["Bug Report", "Feature Request", "General Question", "Data Inquiry"]
+        )
+        message = st.text_area("Your Message", placeholder="Please provide as much detail as possible...", height=150)
+        
+        submit_button = st.form_submit_button(label="Submit Feedback")
+
+    if submit_button:
+        if not name or not email or not message:
+            st.warning("Please fill out all fields before submitting.")
+        elif not is_valid_email(email):
+            st.warning("Please enter a valid email address.")
+        else:
+            with st.spinner("Sending your feedback..."):
+                success = send_feedback_email(name, email, feedback_type, message, email_config)
+                if success:
+                    st.success("Thank you for your feedback! We have received your message and will get back to you shortly.")
+                else:
+                    st.error("Sorry, something went wrong. Please try again later or contact the administrator directly.")
+
+    st.markdown('</div>', unsafe_allow_html=True)
