@@ -728,6 +728,6 @@ elif page == "Feedback & Support":
                 if success:
                     st.success("Thank you for your feedback! We have received your message and will get back to you shortly.")
                 else:
-                    st.error("Sorry, something went wrong. Please try again later or contact the administrator directly.")
+                    st.error("Sorry, something went wrong. Please try again later or contact the administrator directly at theroyalprg@gmail.com")
 
     st.markdown('</div>', unsafe_allow_html=True)
