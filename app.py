@@ -588,159 +588,137 @@ elif page == "Tableau Dashboard":
 # === CODE UPDATE: The entire "Data Sources & Information" page has been replaced ===
 
 elif page == "Data Sources & Information":
-
-    st.markdown('<h1 class="main-header">📚 Data Sources & Methodology</h1>', unsafe_allow_html=True)
-
-
-
-    st.markdown("""
-
-    This dashboard provides a preliminary techno-economic analysis for wind energy projects in select Madhya Pradesh districts. The goal is to serve as a first-pass screening tool for investors, researchers, and policymakers. The data and methodologies used are based on publicly available, reputable sources, but are subject to the limitations outlined below. A bankable feasibility report requires site-specific, high-resolution data collection.
-
-    """)
-
-    st.markdown("---")
-
-
-
-    st.markdown('<h3 class="section-header">🔬 Detailed Data Sources</h3>', unsafe_allow_html=True)
-
-    st.markdown("""
-
-    The data powering this dashboard is a composite of national-level assessments, global datasets, and state-level policy documents.
-
-
-
-    #### 1. Wind Resource Data
-
-    * **National Institute of Wind Energy (NIWE), India:** The foundational wind speed and potential data for districts are derived from NIWE's publications, including the Indian Wind Atlas. This data is typically measured at hub heights of 80m, 100m, and 120m.
-
-        * **Source:** [NIWE Wind Resource Maps](https://niwe.res.in/department_wra_maps.php)
-
-    * **Global Wind Atlas (GWA 3.0):** This dataset, developed by the Technical University of Denmark (DTU), provides high-resolution (250m) global wind climate data. We use it to cross-reference and understand the **Wind Power Density (WPD)**, a more accurate metric than wind speed alone, for the specific coordinates of Bhopal, Indore, Jabalpur, and Ujjain. WPD measures the power available in the wind, expressed in W/m².
-
-        * **Source:** [Global Wind Atlas](https://globalwindatlas.info)
-
-    * **NASA POWER Project:** The Prediction of Worldwide Energy Resources project provides meteorological and solar energy data from satellite observations. This can be used to analyze long-term seasonal and annual variability in wind patterns.
-
-        * **Source:** [NASA POWER Data Access Viewer](https://power.larc.nasa.gov/data-access-viewer/)
-
-
-
-    #### 2. Policy and Financial Data
-
-    * **Ministry of New and Renewable Energy (MNRE), Govt. of India:** Provides the overarching policy framework, national targets, and guidelines for renewable energy projects.
-
-        * **Source:** [MNRE Wind Energy Portal](https://mnre.gov.in/wind-energy/current-status/)
-
-    * **Madhya Pradesh New and Renewable Energy Department (MPNRED):** State-specific policies, particularly the "Madhya Pradesh Renewable Energy Policy," dictate local regulations, land allotment procedures, and grid connectivity protocols.
-
-        * **Source:** [MPNRED Policies](https://www.mprenewable.nic.in/en/policies)
-
-    * **Central Electricity Regulatory Commission (CERC) & MPERC:** Turbine costs, O&M costs, and electricity tariffs are benchmarked against figures published in tariff orders and market analysis reports by CERC and the Madhya Pradesh Electricity Regulatory Commission (MPERC).
-
-        * **Source:** [CERC Tariff Orders](https://cercind.gov.in/orders.html)
-
-    """)
-
-    st.markdown("---")
-
-
-
-    st.markdown('<h3 class="section-header">⚙️ Detailed Methodology</h3>', unsafe_allow_html=True)
-
-    st.markdown(r"""
-
-    The analysis follows a standardized four-step process.
-
-
-
-    #### Step 1: Wind Resource Assessment
-
-    The average wind speed ($V_{avg}$) you see is just the starting point. To estimate the power at a modern turbine's hub height (e.g., 120m or 150m), we must extrapolate it from the measurement height (e.g., 80m) using the **Wind Profile Power Law**:
-
-
-
-    $$ V_2 = V_1 \left( \frac{H_2}{H_1} \right)^\alpha $$
-
-
-
-    Where:
-
-    - $V_2$ = Wind speed at target hub height $H_2$.
-
-    - $V_1$ = Wind speed at original measurement height $H_1$.
-
-    - $\alpha$ (Alpha) = The wind shear coefficient. This crucial parameter depends on surface roughness and atmospheric stability. We assume a standard value of **α = 0.2** for the slightly rough terrain typical of the Malwa plateau region.
-
-
-
-    #### Step 2: Turbine Power Conversion
-
-    The simplified linear formula in the dashboard is an approximation. A rigorous analysis uses a manufacturer-specific **Power Curve**. This curve plots the turbine's power output (in kW) against different wind speeds. It defines the **cut-in speed** (where the turbine starts generating power, ~3-4 m/s), the **rated speed** (where it reaches maximum output), and the **cut-out speed** (where it shuts down for safety, ~25 m/s).
-
-    
-
-    
-
-
-
-    #### Step 3: Annual Energy Production (AEP) Calculation
-
-    The primary metric for a wind farm's performance is its **Capacity Utilization Factor (CUF)**, not the simplified capacity factor. The CUF is the ratio of the actual energy generated over a year to the maximum possible energy that could have been generated at full rated capacity.
-
-
-
-    The AEP is calculated as:
-
-    $AEP = \text{Installed Capacity (MW)} \times 8760 \text{ hours/year} \times \text{CUF}$
-
-
-
-    The CUF is not just a function of wind speed; it's a net value after accounting for various losses (**derating factors**):
-
-    - **Turbine Availability:** Typically 97-98%. (Loss due to maintenance, breakdowns).
-
-    - **Grid Availability:** ~99%. (Loss due to grid failure or substation maintenance).
-
-    - **Wake Losses:** 5-15%. (Loss from turbines disrupting wind flow for downstream turbines).
-
-    - **Electrical Losses:** 2-3%. (Loss in transformers, cables, and inverters).
-
-    - **Environmental Losses:** 1-3%. (Loss due to blade soiling, icing, or extreme temperatures).
-
-    *This dashboard's 'Capacity Factor' is a simplified proxy for the net CUF.*
-
-
-
-    #### Step 4: Financial Viability Analysis
-
-    While the dashboard shows ROI and Payback Period, the industry standard is the **Levelized Cost of Energy (LCOE)**. This represents the break-even price per unit of electricity (kWh or MWh) over the project's lifetime. A project is viable if its LCOE is lower than the tariff it can sell power for.
-
-
-
-    The simplified LCOE formula is:
-
-    $$ LCOE = \frac{\sum_{t=1}^{n} \frac{I_t + M_t}{(1+r)^t}}{\sum_{t=1}^{n} \frac{E_t}{(1+r)^t}} $$
-
-
-
-    Where:
-
-    - $I_t$ = Investment expenditures in year $t$ (CAPEX).
-
-    - $M_t$ = Operations and maintenance expenditures in year $t$ (OPEX).
-
-    - $E_t$ = Electricity generated in year $t$ (AEP).
-
-    - $r$ = Discount rate (cost of capital).
-
-    - $n$ = Lifetime of the project in years.
-
-    """
-
-    )
-
+    st.markdown('<h1 class="main-header">📚 Data Sources & Detailed Methodology</h1>', unsafe_allow_html=True)
+    st.info("This section provides a transparent, detailed breakdown of our data sources and the precise step-by-step calculations used in the dashboard.")
+    st.markdown("---")
+
+    st.markdown("### 🛰️ Primary Data Sources")
+    st.write("The credibility of our analysis depends on the quality of our data. We use only verified, publicly available data from the following government and international agencies.")
+
+    # --- Using columns for a cleaner list of sources ---
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("##### 🇮🇳 National Institute of Wind Energy (NIWE)")
+        st.write(
+            """
+            - **Data Used:** Wind speed baselines, turbulence intensity, and national potential maps from the Indian Wind Atlas.
+            - **Why it's reliable:** NIWE is the primary government body in India for wind resource assessment, using data from hundreds of ground-based monitoring stations.
+            - **[Direct Link: NIWE Wind Resource Maps](https://niwe.res.in/department_wra_maps.php)**
+            """
+        )
+        st.markdown("##### 🇮🇳 Ministry of New & Renewable Energy (MNRE)")
+        st.write(
+            """
+            - **Data Used:** Renewable energy policies, installation targets, and benchmark costs for wind projects.
+            - **Why it's reliable:** MNRE is the central ministry responsible for India's renewable energy sector.
+            - **[Direct Link: MNRE Wind Portal](https://mnre.gov.in/wind-energy/current-status/)**
+            """
+        )
+
+    with col2:
+        st.markdown("##### 🌍 Global Wind Atlas (GWA 3.0)")
+        st.write(
+            """
+            - **Data Used:** High-resolution Wind Power Density (WPD) and mean wind speed data for specific geographic coordinates.
+            - **Why it's reliable:** GWA is an international standard, developed by the Technical University of Denmark (DTU) using advanced meteorological modeling.
+            - **[Direct Link: Global Wind Atlas](https://globalwindatlas.info/)**
+            """
+        )
+        st.markdown("##### 🇮🇳 CERC & MPERC")
+        st.write(
+            """
+            - **Data Used:** Electricity tariff rates, and benchmark Operation & Maintenance (O&M) costs.
+            - **Why it's reliable:** The Central and State Electricity Regulatory Commissions determine the financial regulations for power projects.
+            - **[Direct Link: CERC Tariff Orders](https://cercind.gov.in/orders.html)**
+            """
+        )
+    
+    st.markdown("---")
+    st.markdown("### ⚙️ Step-by-Step Calculation Breakdown")
+    st.write("Here is a detailed explanation of every calculation performed on the main dashboard.")
+
+    with st.expander("Step 1: Capacity Factor Calculation"):
+        st.markdown("#### **What is it?**")
+        st.write("The Capacity Factor (CF) is a percentage that represents how much electricity a turbine *actually* produces compared to its maximum possible output. A turbine in a very windy location like Indore will have a higher CF than one in a less windy area like Bhopal.")
+        
+        st.markdown("#### **Why is it calculated this way?**")
+        st.write("We use an **empirical formula** derived from NIWE studies specific to Indian wind conditions. It provides a realistic estimate based on two key local factors: average wind speed and turbulence.")
+        
+        st.markdown("#### **The Formula:**")
+        st.latex(r'''
+        \text{Capacity Factor} = (0.087 \times V_{avg}) - (\text{Turbulence \%} \times 0.005)
+        ''')
+        
+        st.markdown("#### **Example Calculation (for Indore):**")
+        st.write(f"Using Indore's baseline data (Wind Speed = {district_data['Indore']['wind_speed']} m/s, Turbulence = {district_data['Indore']['turbulence']}%):")
+        st.code(
+            f"CF = (0.087 * {district_data['Indore']['wind_speed']}) - ({district_data['Indore']['turbulence']} * 0.005)\n"
+            f"CF = {0.087 * district_data['Indore']['wind_speed']:.3f} - {district_data['Indore']['turbulence'] * 0.005:.3f}\n"
+            f"CF = {0.087 * district_data['Indore']['wind_speed'] - district_data['Indore']['turbulence'] * 0.005:.3f} \text{ or } { (0.087 * district_data['Indore']['wind_speed'] - district_data['Indore']['turbulence'] * 0.005) * 100:.1f}\%",
+            language='python'
+        )
+
+    with st.expander("Step 2: Annual Energy Production (AEP) Calculation"):
+        st.markdown("#### **What is it?**")
+        st.write("AEP is the total amount of electricity (measured in Megawatt-hours) generated by the wind project in a full year. This is the 'product' that is sold to the grid.")
+        
+        st.markdown("#### **Why is it important?**")
+        st.write("AEP is the foundation for all financial calculations. The more energy produced, the higher the revenue.")
+        
+        st.markdown("#### **The Formula:**")
+        st.latex(r'''
+        \text{AEP (MWh)} = \text{Turbine Capacity (MW)} \times 8760 \text{ hours/year} \times \text{Capacity Factor}
+        ''')
+
+        st.markdown("#### **Example Calculation (2.5 MW Turbine in Indore):**")
+        st.write("Using the Capacity Factor of 0.439 calculated above:")
+        st.code(
+            f"AEP = 2.5 MW * 8760 hours * 0.439\n"
+            f"AEP = {2.5 * 8760 * 0.439:,.0f} \text{ MWh per year}",
+            language='python'
+        )
+
+    with st.expander("Step 3: Financials (Revenue, Costs, Profit)"):
+        st.markdown("#### **What are they?**")
+        st.write("This is the breakdown of the project's income and expenses over its lifetime.")
+        
+        st.markdown("#### **How are they calculated?**")
+        st.write("We use standard financial formulas based on the user's inputs (turbine cost, tariff rate) and the calculated AEP.")
+        
+        st.markdown("#### **The Formulas:**")
+        st.code(
+            """
+# Revenue = Energy Produced * Price per unit of energy
+Annual Revenue = AEP * Electricity Tariff * 1000
+
+# Investment = Cost per MW * Number of MW
+Total Investment = Turbine Cost * Turbine Capacity * 100,000
+
+# O&M = Yearly cost per MW * Number of MW
+Annual O&M Cost = O&M Cost * Turbine Capacity * 100,000
+
+# Profit = (Total Revenue over lifetime) - (Initial Investment) - (Total O&M costs over lifetime)
+Net Profit = (Annual Revenue * Lifetime) - Total Investment - (Annual O&M Cost * Lifetime)
+            """,
+            language='python'
+        )
+
+    with st.expander("Step 4: Key Performance Indicators (ROI & Payback Period)"):
+        st.markdown("#### **What are they?**")
+        st.write("ROI (Return on Investment) and Payback Period are standard metrics used to quickly assess the financial attractiveness of an investment.")
+        
+        st.markdown("#### **Why are they important?**")
+        st.write("- **ROI** shows the total profit as a percentage of the initial investment. A higher ROI is better.")
+        st.write("- **Payback Period** shows how many years it takes for the project's profits to cover the initial investment. A shorter payback period is better.")
+        
+        st.markdown("#### **The Formulas:**")
+        st.latex(r'''
+        \text{ROI} = \left( \frac{\text{Net Profit}}{\text{Total Investment}} \right) \times 100
+        ''')
+        st.latex(r'''
+        \text{Payback Period (years)} = \frac{\text{Total Investment}}{\text{Annual Revenue} - \text{Annual O&M Cost}}
+        ''')
 
 # --- ADDED AI ASSISTANT PAGE ---
 elif page == "AI Assistant":
