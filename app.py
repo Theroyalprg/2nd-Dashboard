@@ -248,17 +248,13 @@ st.markdown("""
 # Email configuration
 def get_email_config():
     """Get email configuration from secrets or environment variables"""
-    try:
-        return {
-            'smtp_server': st.secrets.get('SMTP_SERVER', 'smtp.gmail.com'),
-            'smtp_port': int(st.secrets.get('SMTP_PORT', 587)),
-            'sender_email': st.secrets.get('SENDER_EMAIL', ''),
-            'sender_password': st.secrets.get('SENDER_PASSWORD', ''),
-            'receiver_email': st.secrets.get('RECEIVER_EMAIL', 'theroyalprg@gmail.com')
-        }
-    except Exception as e:
-        st.error(f"Error loading email configuration: {str(e)}")
-        return None
+    return {
+        'smtp_server': st.secrets.get('SMTP_SERVER', 'smtp.gmail.com'),
+        'smtp_port': st.secrets.get('SMTP_PORT', 587),
+        'sender_email': st.secrets.get('SENDER_EMAIL', ''),
+        'sender_password': st.secrets.get('SENDER_PASSWORD', ''),
+        'receiver_email': st.secrets.get('RECEIVER_EMAIL', 'theroyalprg@gmail.com')
+    }
 
 # Email validation
 def is_valid_email(email):
@@ -268,16 +264,7 @@ def is_valid_email(email):
 
 # Send email function
 def send_feedback_email(name, email, feedback_type, message, config):
-    """Send feedback email with better error handling"""
-    if not config:
-        st.error("Email configuration not available")
-        return False
-        
-    # Validate required fields
-    if not all([config['sender_email'], config['sender_password']]):
-        st.error("Email credentials not configured properly")
-        return False
-    
+    """Send feedback email"""
     try:
         # Create message
         msg = MIMEMultipart()
@@ -303,23 +290,15 @@ def send_feedback_email(name, email, feedback_type, message, config):
         
         msg.attach(MIMEText(body, 'plain'))
         
-        # Send email with timeout
+        # Send email
         with smtplib.SMTP(config['smtp_server'], config['smtp_port']) as server:
-            server.settimeout(30)  # 30 second timeout
             server.starttls()
             server.login(config['sender_email'], config['sender_password'])
             server.send_message(msg)
             
         return True
-        
-    except smtplib.SMTPAuthenticationError:
-        st.error("Email authentication failed. Please check your credentials.")
-        return False
-    except smtplib.SMTPException as e:
-        st.error(f"SMTP error occurred: {str(e)}")
-        return False
     except Exception as e:
-        st.error(f"Unexpected error sending email: {str(e)}")
+        st.error(f"Error sending email: {str(e)}")
         return False
 
 # Navigation
@@ -618,4 +597,156 @@ if page == "Wind Dashboard":
         
         st.markdown('<div class="metric-card">', unsafe_allow_html=True)
         st.markdown('<p class="metric-label">Payback Period</p>', unsafe_allow_html=True)
-        payback
+        payback_display = f"{payback_period:.1f} years" if payback_period != float('inf') else "> Project Lifetime"
+        st.markdown(f'<p class="metric-value">{payback_display}</p>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # District comparison
+        st.markdown('<h3 class="section-header">District Comparison</h3>', unsafe_allow_html=True)
+        comparison_data = []
+        for district, data in district_data.items():
+            comparison_data.append({
+                "District": district,
+                "Wind Speed (m/s)": data["wind_speed"],
+                "Potential": data["potential"],
+                "Wind Potential (MW/sq.km)": data["wind_potential"]
+            })
+        
+        comparison_df = pd.DataFrame(comparison_data)
+        st.dataframe(comparison_df, use_container_width=True, height=200)
+        
+        # Data sources
+        st.markdown('<h3 class="section-header">Data Sources</h3>', unsafe_allow_html=True)
+        st.markdown("""
+        - **National Institute of Wind Energy (NIWE):** [Wind Resource Map of India](https://niwe.res.in/department_wra_about.php)
+        - **Ministry of New and Renewable Energy (MNRE):** [Wind Energy Potential](https://mnre.gov.in/wind-energy-potential)
+        - **India Meteorological Department (IMD):** [Climate Data](https://mausam.imd.gov.in/)
+        - **Madhya Pradesh Energy Department:** [Renewable Energy Policy](https://www.mprenewable.nic.in/)
+        """)
+
+    # Footer
+    st.markdown("""
+    <p class="footer">
+        © 2025 Wind Energy Analytics Dashboard by Prakarsh | Data Sources: NIWE, MNRE, IMD<br>
+        For informational purposes only. Actual project feasibility requires detailed site assessment.
+    </p>
+    """, unsafe_allow_html=True)
+
+elif page == "Data Sources & Information":
+    st.markdown('<h1 class="main-header">📚 Data Sources & Methodology</h1>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    ## About This Dashboard
+    
+    This Wind Energy Analytics Dashboard provides comprehensive analysis of wind energy potential 
+    across districts in Madhya Pradesh, India. The tool enables policymakers, investors, and 
+    renewable energy developers to assess the feasibility of wind energy projects in the region.
+    """)
+    
+    st.markdown("---")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown('<h3 class="section-header">Data Sources</h3>', unsafe_allow_html=True)
+        
+        st.markdown("""
+        #### Primary Data Sources:
+        
+        - **National Institute of Wind Energy (NIWE)**
+          - Wind resource assessment data
+          - Technical specifications for wind turbines
+          - Capacity factor calculations
+          - [Website](https://niwe.res.in/)
+        
+        - **Ministry of New and Renewable Energy (MNRE)**
+          - Policy framework data
+          - Subsidy and incentive information
+          - National wind energy targets
+          - [Website](https://mnre.gov.in/)
+        
+        - **India Meteorological Department (IMD)**
+          - Historical wind speed data
+          - Seasonal variation patterns
+          - Climate data for Madhya Pradesh
+          - [Website](https://mausam.imd.gov.in/)
+        
+        - **Madhya Pradesh Energy Department**
+          - State-specific renewable energy policies
+          - Electricity tariff structures
+          - Grid connectivity information
+          - [Website](https://www.mprenewable.nic.in/)
+        """)
+    
+    with col2:
+        st.markdown('<h3 class="section-header">Methodology</h3>', unsafe_allow_html=True)
+        
+        st.markdown("""
+        #### Calculation Methodology:
+        
+        **1. Wind Resource Assessment**
+        - Data collected from NIWE's wind monitoring stations
+        - Annual average wind speeds calculated from 10+ years of data
+        - Height correction applied using power law (α = 0.14)
+        
+        **2. Energy Production Estimation**
+        - Capacity Factor = 0.087 × V_avg - (Turbulence × 0.005)
+        - Annual Generation = Capacity × 8760 hours × Capacity Factor
+        - Based on IEC 61400-12-1 standard for power performance measurements
+        
+        **3. Financial Calculations**
+        - Investment costs based on current market rates for wind turbines
+        - O&M costs estimated at 1.5-2.5% of initial investment annually
+        - Tariff rates based on MPERC's latest renewable energy purchase guidelines
+        - ROI calculated over project lifetime (typically 20-25 years)
+        
+        **4. Technical Assumptions**
+        - Turbine availability: 95%
+        - Electrical losses: 3%
+        - Wake losses: 5-10% (depending on wind farm layout)
+        - Grid availability: 98%
+        """)
+    
+    st.markdown("---")
+    
+    st.markdown('<h3 class="section-header">Limitations & Considerations</h3>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    #### Important Considerations:
+    
+    1. **Site-Specific Variations**
+    - Actual wind resources may vary significantly within a district
+    - Local topography greatly influences wind patterns
+    - Micro-siting is essential for accurate assessment
+    
+    2. **Technology Assumptions**
+    - Calculations based on modern 2-3 MW wind turbines
+    - Capacity factors may vary with turbine technology
+    - Newer turbines may perform better at lower wind speeds
+    
+    3. **Financial Considerations**
+    - Does not account for inflation or financing costs
+    - Land acquisition costs vary by location
+    - Transmission infrastructure costs not included
+    - Government incentives and subsidies may apply
+    
+    4. **Environmental Factors**
+    - Seasonal variations in wind patterns
+    - Climate change impacts on long-term wind resources
+    - Environmental clearance requirements
+    """)
+    
+    st.markdown("---")
+    
+    st.markdown('<h3 class="section-header">Recommended Next Steps</h3>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    For serious project development, we recommend:
+    
+    1. **Site-Specific Assessment**
+    - Install meteorological masts for at least 12 months
+    - Conduct detailed wind resource measurement
+    - Perform micro-siting analysis
+    
+    2. **Feasibility Study**
+    - Detailed technical feasibility assessment
