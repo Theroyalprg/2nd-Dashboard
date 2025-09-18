@@ -585,125 +585,162 @@ elif page == "Tableau Dashboard":
     components.html(embed_code, height=825, scrolling=True)
 
 # --- YOUR ORIGINAL DATA SOURCES PAGE (UNCHANGED) ---
+# === CODE UPDATE: The entire "Data Sources & Information" page has been replaced ===
+
 elif page == "Data Sources & Information":
-    st.markdown('<h1 class="main-header">📚 Data Sources & Methodology</h1>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    ## About This Dashboard
-    
-    This Wind Energy Analytics Dashboard provides comprehensive analysis of wind energy potential 
-    across districts in Madhya Pradesh, India. The tool enables policymakers, investors, and 
-    renewable energy developers to assess the feasibility of wind energy projects in the region.
-    """)
-    
-    st.markdown("---")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown('<h3 class="section-header">Data Sources</h3>', unsafe_allow_html=True)
-        
-        st.markdown("""
-        #### Primary Data Sources:
-        
-        - **National Institute of Wind Energy (NIWE)**
-          - Wind resource assessment data
-          - Technical specifications for wind turbines
-          - Capacity factor calculations
-          - [Website](https://niwe.res.in/)
-        
-        - **Ministry of New and Renewable Energy (MNRE)**
-          - Policy framework data
-          - Subsidy and incentive information
-          - National wind energy targets
-          - [Website](https://mnre.gov.in/)
-        
-        - **India Meteorological Department (IMD)**
-          - Historical wind speed data
-          - Seasonal variation patterns
-          - Climate data for Madhya Pradesh
-          - [Website](https://mausam.imd.gov.in/)
-        
-        - **Madhya Pradesh Energy Department**
-          - State-specific renewable energy policies
-          - Electricity tariff structures
-          - Grid connectivity information
-          - [Website](https://www.mprenewable.nic.in/)
-        """)
-    
-    with col2:
-        st.markdown('<h3 class="section-header">Methodology</h3>', unsafe_allow_html=True)
-        
-        st.markdown("""
-        #### Calculation Methodology:
-        
-        **1. Wind Resource Assessment**
-        - Data collected from NIWE's wind monitoring stations
-        - Annual average wind speeds calculated from 10+ years of data
-        - Height correction applied using power law (α = 0.14)
-        
-        **2. Energy Production Estimation**
-        - Capacity Factor = 0.087 × V_avg - (Turbulence × 0.005)
-        - Annual Generation = Capacity × 8760 hours × Capacity Factor
-        - Based on IEC 61400-12-1 standard for power performance measurements
-        
-        **3. Financial Calculations**
-        - Investment costs based on current market rates for wind turbines
-        - O&M costs estimated at 1.5-2.5% of initial investment annually
-        - Tariff rates based on MPERC's latest renewable energy purchase guidelines
-        - ROI calculated over project lifetime (typically 20-25 years)
-        
-        **4. Technical Assumptions**
-        - Turbine availability: 95%
-        - Electrical losses: 3%
-        - Wake losses: 5-10% (depending on wind farm layout)
-        - Grid availability: 98%
-        """)
-    
-    st.markdown("---")
-    
-    st.markdown('<h3 class="section-header">Limitations & Considerations</h3>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    #### Important Considerations:
-    
-    1. **Site-Specific Variations**
-    - Actual wind resources may vary significantly within a district
-    - Local topography greatly influences wind patterns
-    - Micro-siting is essential for accurate assessment
-    
-    2. **Technology Assumptions**
-    - Calculations based on modern 2-3 MW wind turbines
-    - Capacity factors may vary with turbine technology
-    - Newer turbines may perform better at lower wind speeds
-    
-    3. **Financial Considerations**
-    - Does not account for inflation or financing costs
-    - Land acquisition costs vary by location
-    - Transmission infrastructure costs not included
-    - Government incentives and subsidies may apply
-    
-    4. **Environmental Factors**
-    - Seasonal variations in wind patterns
-    - Climate change impacts on long-term wind resources
-    - Environmental clearance requirements
-    """)
-    
-    st.markdown("---")
-    
-    st.markdown('<h3 class="section-header">Recommended Next Steps</h3>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    For serious project development, we recommend:
-    
-    1. **Site-Specific Assessment**
-    - Install meteorological masts for at least 12 months
-    - Conduct detailed wind resource measurement
-    - Perform micro-siting analysis
-    
-    2. **Feasibility Study**
-    - Detailed technical feasibility assessment
-    """)
+
+    st.markdown('<h1 class="main-header">📚 Data Sources & Methodology</h1>', unsafe_allow_html=True)
+
+
+
+    st.markdown("""
+
+    This dashboard provides a preliminary techno-economic analysis for wind energy projects in select Madhya Pradesh districts. The goal is to serve as a first-pass screening tool for investors, researchers, and policymakers. The data and methodologies used are based on publicly available, reputable sources, but are subject to the limitations outlined below. A bankable feasibility report requires site-specific, high-resolution data collection.
+
+    """)
+
+    st.markdown("---")
+
+
+
+    st.markdown('<h3 class="section-header">🔬 Detailed Data Sources</h3>', unsafe_allow_html=True)
+
+    st.markdown("""
+
+    The data powering this dashboard is a composite of national-level assessments, global datasets, and state-level policy documents.
+
+
+
+    #### 1. Wind Resource Data
+
+    * **National Institute of Wind Energy (NIWE), India:** The foundational wind speed and potential data for districts are derived from NIWE's publications, including the Indian Wind Atlas. This data is typically measured at hub heights of 80m, 100m, and 120m.
+
+        * **Source:** [NIWE Wind Resource Maps](https://niwe.res.in/department_wra_maps.php)
+
+    * **Global Wind Atlas (GWA 3.0):** This dataset, developed by the Technical University of Denmark (DTU), provides high-resolution (250m) global wind climate data. We use it to cross-reference and understand the **Wind Power Density (WPD)**, a more accurate metric than wind speed alone, for the specific coordinates of Bhopal, Indore, Jabalpur, and Ujjain. WPD measures the power available in the wind, expressed in W/m².
+
+        * **Source:** [Global Wind Atlas](https://globalwindatlas.info)
+
+    * **NASA POWER Project:** The Prediction of Worldwide Energy Resources project provides meteorological and solar energy data from satellite observations. This can be used to analyze long-term seasonal and annual variability in wind patterns.
+
+        * **Source:** [NASA POWER Data Access Viewer](https://power.larc.nasa.gov/data-access-viewer/)
+
+
+
+    #### 2. Policy and Financial Data
+
+    * **Ministry of New and Renewable Energy (MNRE), Govt. of India:** Provides the overarching policy framework, national targets, and guidelines for renewable energy projects.
+
+        * **Source:** [MNRE Wind Energy Portal](https://mnre.gov.in/wind-energy/current-status/)
+
+    * **Madhya Pradesh New and Renewable Energy Department (MPNRED):** State-specific policies, particularly the "Madhya Pradesh Renewable Energy Policy," dictate local regulations, land allotment procedures, and grid connectivity protocols.
+
+        * **Source:** [MPNRED Policies](https://www.mprenewable.nic.in/en/policies)
+
+    * **Central Electricity Regulatory Commission (CERC) & MPERC:** Turbine costs, O&M costs, and electricity tariffs are benchmarked against figures published in tariff orders and market analysis reports by CERC and the Madhya Pradesh Electricity Regulatory Commission (MPERC).
+
+        * **Source:** [CERC Tariff Orders](https://cercind.gov.in/orders.html)
+
+    """)
+
+    st.markdown("---")
+
+
+
+    st.markdown('<h3 class="section-header">⚙️ Detailed Methodology</h3>', unsafe_allow_html=True)
+
+    st.markdown(r"""
+
+    The analysis follows a standardized four-step process.
+
+
+
+    #### Step 1: Wind Resource Assessment
+
+    The average wind speed ($V_{avg}$) you see is just the starting point. To estimate the power at a modern turbine's hub height (e.g., 120m or 150m), we must extrapolate it from the measurement height (e.g., 80m) using the **Wind Profile Power Law**:
+
+
+
+    $$ V_2 = V_1 \left( \frac{H_2}{H_1} \right)^\alpha $$
+
+
+
+    Where:
+
+    - $V_2$ = Wind speed at target hub height $H_2$.
+
+    - $V_1$ = Wind speed at original measurement height $H_1$.
+
+    - $\alpha$ (Alpha) = The wind shear coefficient. This crucial parameter depends on surface roughness and atmospheric stability. We assume a standard value of **α = 0.2** for the slightly rough terrain typical of the Malwa plateau region.
+
+
+
+    #### Step 2: Turbine Power Conversion
+
+    The simplified linear formula in the dashboard is an approximation. A rigorous analysis uses a manufacturer-specific **Power Curve**. This curve plots the turbine's power output (in kW) against different wind speeds. It defines the **cut-in speed** (where the turbine starts generating power, ~3-4 m/s), the **rated speed** (where it reaches maximum output), and the **cut-out speed** (where it shuts down for safety, ~25 m/s).
+
+    
+
+    
+
+
+
+    #### Step 3: Annual Energy Production (AEP) Calculation
+
+    The primary metric for a wind farm's performance is its **Capacity Utilization Factor (CUF)**, not the simplified capacity factor. The CUF is the ratio of the actual energy generated over a year to the maximum possible energy that could have been generated at full rated capacity.
+
+
+
+    The AEP is calculated as:
+
+    $AEP = \text{Installed Capacity (MW)} \times 8760 \text{ hours/year} \times \text{CUF}$
+
+
+
+    The CUF is not just a function of wind speed; it's a net value after accounting for various losses (**derating factors**):
+
+    - **Turbine Availability:** Typically 97-98%. (Loss due to maintenance, breakdowns).
+
+    - **Grid Availability:** ~99%. (Loss due to grid failure or substation maintenance).
+
+    - **Wake Losses:** 5-15%. (Loss from turbines disrupting wind flow for downstream turbines).
+
+    - **Electrical Losses:** 2-3%. (Loss in transformers, cables, and inverters).
+
+    - **Environmental Losses:** 1-3%. (Loss due to blade soiling, icing, or extreme temperatures).
+
+    *This dashboard's 'Capacity Factor' is a simplified proxy for the net CUF.*
+
+
+
+    #### Step 4: Financial Viability Analysis
+
+    While the dashboard shows ROI and Payback Period, the industry standard is the **Levelized Cost of Energy (LCOE)**. This represents the break-even price per unit of electricity (kWh or MWh) over the project's lifetime. A project is viable if its LCOE is lower than the tariff it can sell power for.
+
+
+
+    The simplified LCOE formula is:
+
+    $$ LCOE = \frac{\sum_{t=1}^{n} \frac{I_t + M_t}{(1+r)^t}}{\sum_{t=1}^{n} \frac{E_t}{(1+r)^t}} $$
+
+
+
+    Where:
+
+    - $I_t$ = Investment expenditures in year $t$ (CAPEX).
+
+    - $M_t$ = Operations and maintenance expenditures in year $t$ (OPEX).
+
+    - $E_t$ = Electricity generated in year $t$ (AEP).
+
+    - $r$ = Discount rate (cost of capital).
+
+    - $n$ = Lifetime of the project in years.
+
+    """
+
+    )
+
 
 # --- ADDED AI ASSISTANT PAGE ---
 elif page == "AI Assistant":
