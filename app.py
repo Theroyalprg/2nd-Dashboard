@@ -9,7 +9,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import re
-import requests # <-- 1. ADDED THIS IMPORT
+import requests
+import plotly.graph_objects as go # --- BEAUTIFY: Added for interactive charts ---
 
 # Page configuration
 st.set_page_config(
@@ -288,7 +289,7 @@ def send_feedback_email(name, email, feedback_type, message, config):
         return False
 
 # Navigation
-page = st.sidebar.selectbox("Navigate", ["Wind Dashboard", "Data Sources & Information", "AI Assistant", "Feedback & Support"]) # <-- 2. ADDED AI ASSISTANT TO NAVIGATION
+page = st.sidebar.selectbox("Navigate", ["Wind Dashboard", "Data Sources & Information", "AI Assistant", "Feedback & Support"])
 
 # District data with verified sources
 district_data = {
@@ -355,12 +356,12 @@ if page == "Wind Dashboard":
         selected_district = st.selectbox("", list(district_data.keys()), index=1)
         st.markdown('</div>', unsafe_allow_html=True)
         
-        st.markdown('<h3 class="section-header">Project Parameters</h3>', unsafe_allow_html=True)
+        st.markdown('<h3 class="section-header">⚙️ Project Parameters</h3>', unsafe_allow_html=True) # --- BEAUTIFY: Added icon ---
         years = st.slider("Project Lifetime (Years)", 1, 25, 15)
         capacity_mw = st.number_input("Turbine Capacity (MW)", 0.5, 10.0, 2.5, step=0.5)
         area_km = st.number_input("Project Area (sq. km)", 1.0, 100.0, 10.0, step=1.0)
         
-        st.markdown('<h3 class="section-header">Wind Conditions</h3>', unsafe_allow_html=True)
+        st.markdown('<h3 class="section-header">💨 Wind Conditions</h3>', unsafe_allow_html=True) # --- BEAUTIFY: Added icon ---
         avg_wind_speed = st.slider("Average Wind Speed (m/s)", 3.0, 12.0, 
                                    district_data[selected_district]["wind_speed"], step=0.1)
         st.markdown('<div class="wind-speed-indicator"></div>', unsafe_allow_html=True)
@@ -369,7 +370,7 @@ if page == "Wind Dashboard":
         turbulence = st.slider("Turbulence Intensity (%)", 5.0, 25.0, 
                                district_data[selected_district]["turbulence"], step=0.1)
         
-        st.markdown('<h3 class="section-header">Financial Parameters</h3>', unsafe_allow_html=True)
+        st.markdown('<h3 class="section-header">💰 Financial Parameters</h3>', unsafe_allow_html=True) # --- BEAUTIFY: Added icon ---
         turbine_cost = st.number_input("Turbine Cost (₹ lakhs/MW)", 500, 1000, 700)
         om_cost = st.number_input("O&M Cost (₹ lakhs/MW/year)", 10, 50, 30)
         tariff_rate = st.number_input("Electricity Tariff (₹/kWh)", 3.0, 8.0, 5.2, step=0.1)
@@ -382,18 +383,18 @@ if page == "Wind Dashboard":
 
     with col1:
         # District information
-        st.markdown(f'<h3 class="section-header">District Overview: {selected_district}</h3>', unsafe_allow_html=True)
+        st.markdown(f'<h3 class="section-header">🗺️ District Overview: {selected_district}</h3>', unsafe_allow_html=True) # --- BEAUTIFY: Added icon ---
         
         # Create a map centered on the selected district
         map_center = [district_data[selected_district]["lat"], district_data[selected_district]["lon"]]
-        m = folium.Map(location=map_center, zoom_start=9, tiles="CartoDB dark_matter")
+        m = folium.Map(location=map_center, zoom_start=9, tiles="CartoDB positron") # --- BEAUTIFY: Changed map style ---
         
         # Add marker for the selected district
         folium.Marker(
             map_center,
-            popup=f"{selected_district} - Wind Speed: {district_data[selected_district]['wind_speed']} m/s",
+            popup=f"<strong>{selected_district}</strong><br>Wind Speed: {district_data[selected_district]['wind_speed']} m/s", # --- BEAUTIFY: Made popup bold ---
             tooltip=f"Click for details",
-            icon=folium.Icon(color="blue", icon="wind", prefix="fa")
+            icon=folium.Icon(color="green", icon="wind", prefix="fa") # --- BEAUTIFY: Changed icon color ---
         ).add_to(m)
         
         # Display the map
@@ -411,47 +412,54 @@ if page == "Wind Dashboard":
             st.metric("Theoretical Potential", f"{district_data[selected_district]['wind_potential']} MW/sq.km")
         
         st.markdown(f"**Data Source:** [{district_data[selected_district]['source']}]({district_data[selected_district]['source_url']})")
+
+        # --- BEAUTIFY: Placed calculations inside an expander to clean up the UI ---
+        with st.expander("Show Detailed Calculation Steps"):
+            # Calculations with detailed explanations
+            st.markdown('<h3 class="section-header">Energy Production Calculations</h3>', unsafe_allow_html=True)
+            
+            st.markdown("**Capacity Factor Calculation:**")
+            st.markdown('<div class="calculation-box">', unsafe_allow_html=True)
+            st.markdown("Capacity Factor = 0.087 × V_avg - (Turbulence × 0.005)")
+            capacity_factor = max(0.087 * avg_wind_speed - (turbulence * 0.005), 0)
+            st.markdown(f"= 0.087 × {avg_wind_speed} - ({turbulence} × 0.005) = {capacity_factor:.3f}")
+            st.markdown('</div>', unsafe_allow_html=True)
+            st.caption("Based on empirical formula from NIWE studies (V_avg = wind speed in m/s)")
+            
+            st.markdown("**Annual Energy Generation:**")
+            st.markdown('<div class="calculation-box">', unsafe_allow_html=True)
+            st.markdown("Annual Generation (MWh) = Capacity (MW) × 8760 hours × Capacity Factor")
+            estimated_annual_generation = capacity_mw * 8760 * capacity_factor
+            st.markdown(f"= {capacity_mw} × 8760 × {capacity_factor:.3f} = {estimated_annual_generation:,.0f} MWh")
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # Financial calculations
+            st.markdown('<h3 class="section-header">Financial Calculations</h3>', unsafe_allow_html=True)
+            
+            st.markdown("**Revenue Calculation:**")
+            st.markdown('<div class="calculation-box">', unsafe_allow_html=True)
+            st.markdown("Annual Revenue (₹) = Annual Generation (MWh) × Tariff (₹/kWh) × 1000")
+            annual_revenue = estimated_annual_generation * tariff_rate * 1000
+            st.markdown(f"= {estimated_annual_generation:,.0f} × {tariff_rate} × 1000 = ₹ {annual_revenue:,.0f}")
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            st.markdown("**Cost Calculations:**")
+            st.markdown('<div class="calculation-box">', unsafe_allow_html=True)
+            st.markdown("Total Investment (₹) = Turbine Cost (₹ lakhs/MW) × Capacity (MW) × 100,000")
+            total_investment = capacity_mw * turbine_cost * 100000
+            st.markdown(f"= {turbine_cost} × {capacity_mw} × 100,000 = ₹ {total_investment:,.0f}")
+            
+            st.markdown("Annual O&M Cost (₹) = O&M Cost (₹ lakhs/MW/year) × Capacity (MW) × 100,000")
+            annual_om_cost = capacity_mw * om_cost * 100000
+            st.markdown(f"= {om_cost} × {capacity_mw} × 100,000 = ₹ {annual_om_cost:,.0f}")
+            st.markdown('</div>', unsafe_allow_html=True)
         
-        # Calculations with detailed explanations
-        st.markdown('<h3 class="section-header">Energy Production Calculations</h3>', unsafe_allow_html=True)
-        
-        st.markdown("**Capacity Factor Calculation:**")
-        st.markdown('<div class="calculation-box">', unsafe_allow_html=True)
-        st.markdown("Capacity Factor = 0.087 × V_avg - (Turbulence × 0.005)")
+        # Financial metrics (calculated outside expander to be available for charts)
         capacity_factor = max(0.087 * avg_wind_speed - (turbulence * 0.005), 0)
-        st.markdown(f"= 0.087 × {avg_wind_speed} - ({turbulence} × 0.005) = {capacity_factor:.3f}")
-        st.markdown('</div>', unsafe_allow_html=True)
-        st.caption("Based on empirical formula from NIWE studies (V_avg = wind speed in m/s)")
-        
-        st.markdown("**Annual Energy Generation:**")
-        st.markdown('<div class="calculation-box">', unsafe_allow_html=True)
-        st.markdown("Annual Generation (MWh) = Capacity (MW) × 8760 hours × Capacity Factor")
         estimated_annual_generation = capacity_mw * 8760 * capacity_factor
-        st.markdown(f"= {capacity_mw} × 8760 × {capacity_factor:.3f} = {estimated_annual_generation:,.0f} MWh")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Financial calculations
-        st.markdown('<h3 class="section-header">Financial Calculations</h3>', unsafe_allow_html=True)
-        
-        st.markdown("**Revenue Calculation:**")
-        st.markdown('<div class="calculation-box">', unsafe_allow_html=True)
-        st.markdown("Annual Revenue (₹) = Annual Generation (MWh) × Tariff (₹/kWh) × 1000")
         annual_revenue = estimated_annual_generation * tariff_rate * 1000
-        st.markdown(f"= {estimated_annual_generation:,.0f} × {tariff_rate} × 1000 = ₹ {annual_revenue:,.0f}")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown("**Cost Calculations:**")
-        st.markdown('<div class="calculation-box">', unsafe_allow_html=True)
-        st.markdown("Total Investment (₹) = Turbine Cost (₹ lakhs/MW) × Capacity (MW) × 100,000")
         total_investment = capacity_mw * turbine_cost * 100000
-        st.markdown(f"= {turbine_cost} × {capacity_mw} × 100,000 = ₹ {total_investment:,.0f}")
-        
-        st.markdown("Annual O&M Cost (₹) = O&M Cost (₹ lakhs/MW/year) × Capacity (MW) × 100,000")
         annual_om_cost = capacity_mw * om_cost * 100000
-        st.markdown(f"= {om_cost} × {capacity_mw} × 100,000 = ₹ {annual_om_cost:,.0f}")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Financial metrics
         annual_cash_flow = annual_revenue - annual_om_cost
         total_revenue = annual_revenue * years
         total_om_cost = annual_om_cost * years
@@ -459,32 +467,20 @@ if page == "Wind Dashboard":
         roi = (net_profit / total_investment) * 100 if total_investment > 0 else 0
         payback_period = total_investment / annual_cash_flow if annual_cash_flow > 0 else float('inf')
         
-        # Create data for charts
         years_range = np.arange(1, years + 1)
         cumulative_generation = [estimated_annual_generation * y for y in years_range]
         cumulative_revenue = [annual_revenue * y for y in years_range]
         cumulative_cash_flow = [annual_cash_flow * y - total_investment for y in years_range]
         
-        # Chart selection
-        chart_option = st.radio("Select Chart View", 
-                                ["Energy Output", "Financial Performance", "Cash Flow Analysis"], 
-                                horizontal=True)
+        # --- BEAUTIFY: Replaced Radio Button with Tabs for a cleaner look ---
+        tab1, tab2, tab3 = st.tabs(["📊 Financial Performance", "⚡ Energy Output", "📈 Cash Flow Analysis (Interactive)"])
         
-        # Create charts with updated color scheme
-        fig, ax = plt.subplots(figsize=(10, 6))
-        plt.style.use('dark_background')
-        ax.set_facecolor('#1a202c')
-        fig.patch.set_facecolor('#0f1a2a')
-        
-        if chart_option == "Energy Output":
-            ax.plot(years_range, cumulative_generation, marker="o", linewidth=2.5, color="#4fd1c5", markersize=8)
-            ax.fill_between(years_range, cumulative_generation, alpha=0.3, color="#4fd1c5")
-            ax.set_ylabel("Cumulative Energy (MWh)", fontweight='bold', color='white')
-            ax.set_title("Projected Energy Output Over Time", fontweight='bold', fontsize=14, color='white')
-            ax.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
-            ax.tick_params(colors='white')
-        elif chart_option == "Financial Performance":
-            ax.plot(years_range, cumulative_revenue, marker="s", linewidth=2.5, color="#4fd1c5", label="Revenue", markersize=8)
+        with tab1:
+            fig, ax = plt.subplots(figsize=(10, 6))
+            plt.style.use('dark_background')
+            ax.set_facecolor('#1a202c')
+            fig.patch.set_facecolor('#0f1a2a')
+            ax.plot(years_range, cumulative_revenue, marker="s", linewidth=2.5, color="#4fd1c5", label="Cumulative Revenue", markersize=8)
             ax.axhline(y=total_investment, color="#fc8181", linestyle="--", linewidth=2, label="Initial Investment")
             ax.fill_between(years_range, cumulative_revenue, alpha=0.3, color="#4fd1c5")
             ax.set_ylabel("Amount (₹)", fontweight='bold', color='white')
@@ -492,64 +488,56 @@ if page == "Wind Dashboard":
             ax.legend(facecolor='#2d3748', edgecolor='#4a5568', labelcolor='white')
             ax.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
             ax.tick_params(colors='white')
-        else:
-            ax.plot(years_range, cumulative_cash_flow, marker="^", linewidth=2.5, color="#4fd1c5", markersize=8)
-            ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) >= 0, alpha=0.3, color="#48bb78")
-            ax.fill_between(years_range, cumulative_cash_flow, where=np.array(cumulative_cash_flow) < 0, alpha=0.3, color="#fc8181")
-            ax.axhline(y=0, color="#fc8181", linestyle="--", linewidth=2)
-            ax.set_ylabel("Net Cash Flow (₹)", fontweight='bold', color='white')
-            ax.set_title("Project Cash Flow Over Time", fontweight='bold', fontsize=14, color='white')
+            ax.set_xlabel("Years", fontweight='bold', color='white')
+            st.pyplot(fig)
+
+        with tab2:
+            fig, ax = plt.subplots(figsize=(10, 6))
+            plt.style.use('dark_background')
+            ax.set_facecolor('#1a202c')
+            fig.patch.set_facecolor('#0f1a2a')
+            ax.plot(years_range, cumulative_generation, marker="o", linewidth=2.5, color="#4fd1c5", markersize=8)
+            ax.fill_between(years_range, cumulative_generation, alpha=0.3, color="#4fd1c5")
+            ax.set_ylabel("Cumulative Energy (MWh)", fontweight='bold', color='white')
+            ax.set_title("Projected Energy Output Over Time", fontweight='bold', fontsize=14, color='white')
             ax.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
             ax.tick_params(colors='white')
-        
-        ax.set_xlabel("Years", fontweight='bold', color='white')
-        st.pyplot(fig)
-        
-        # Additional charts
-        st.markdown('<h3 class="section-header">Performance Details</h3>', unsafe_allow_html=True)
-        col1b, col2b = st.columns(2)
-        
-        with col1b:
-            # Capacity factor by wind speed
-            wind_speeds = np.linspace(3, 12, 10)
-            cap_factors = [max(0.087 * ws - (turbulence * 0.005), 0) for ws in wind_speeds]
-            
-            fig2, ax2 = plt.subplots(figsize=(8, 4.5))
-            plt.style.use('dark_background')
-            ax2.set_facecolor('#1a202c')
-            fig2.patch.set_facecolor('#0f1a2a')
-            
-            ax2.plot(wind_speeds, cap_factors, marker='o', color='#4fd1c5', linewidth=2.5, markersize=6)
-            ax2.axvline(x=avg_wind_speed, color='#fc8181', linestyle='--', alpha=0.8, linewidth=2)
-            ax2.set_xlabel('Wind Speed (m/s)', fontweight='bold', color='white')
-            ax2.set_ylabel('Capacity Factor', fontweight='bold', color='white')
-            ax2.set_title('Capacity Factor vs. Wind Speed', fontweight='bold', color='white')
-            ax2.grid(True, alpha=0.3, linestyle='--', color='#4a5568')
-            ax2.tick_params(colors='white')
-            st.pyplot(fig2)
-        
-        with col2b:
-            # Cost breakdown
-            labels = ['Turbine Cost', 'O&M Cost']
-            sizes = [total_investment, total_om_cost]
-            colors = ['#4fd1c5', '#4299e1']
-            
-            fig3, ax3 = plt.subplots(figsize=(8, 4.5))
-            plt.style.use('dark_background')
-            fig3.patch.set_facecolor('#0f1a2a')
-            
-            wedges, texts, autotexts = ax3.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', 
-                                               startangle=90, textprops={'fontweight': 'bold', 'color': 'white'})
-            for autotext in autotexts:
-                autotext.set_color('white')
-                autotext.set_fontweight('bold')
-            ax3.axis('equal')
-            ax3.set_title('Cost Breakdown', fontweight='bold', color='white')
-            st.pyplot(fig3)
+            ax.set_xlabel("Years", fontweight='bold', color='white')
+            st.pyplot(fig)
+
+        with tab3:
+            # --- BEAUTIFY: Replaced Matplotlib chart with an interactive Plotly chart ---
+            fig = go.Figure()
+            # Add cash flow line
+            fig.add_trace(go.Scatter(x=list(years_range), y=cumulative_cash_flow, mode='lines+markers', name='Net Cash Flow',
+                                     line=dict(color='#4fd1c5', width=3), marker=dict(size=8)))
+            # Add shading for positive and negative areas
+            fig.add_trace(go.Scatter(x=list(years_range), y=cumulative_cash_flow,
+                                     fill='tozeroy', mode='none', fillcolor='rgba(252, 129, 129, 0.3)',
+                                     showlegend=False))
+            fig.add_trace(go.Scatter(x=list(years_range), y=cumulative_cash_flow,
+                                     fill='tozeroy', mode='none', fillcolor='rgba(72, 187, 120, 0.3)',
+                                     showlegend=False,
+                                     hovertemplate=None,
+                                     hoverinfo='skip'))
+
+            fig.update_layout(
+                title='Interactive Project Cash Flow Over Time',
+                xaxis_title='Years',
+                yaxis_title='Net Cash Flow (₹)',
+                plot_bgcolor='#1a202c',
+                paper_bgcolor='#0f1a2a',
+                font=dict(color='#e6e9f0'),
+                xaxis=dict(gridcolor='#4a5568'),
+                yaxis=dict(gridcolor='#4a5568'),
+                hovermode='x unified'
+            )
+            fig.add_hline(y=0, line_dash="dash", line_color="#fc8181")
+            st.plotly_chart(fig, use_container_width=True)
 
     with col2:
         # Key metrics display
-        st.markdown('<h3 class="section-header">Key Performance Indicators</h3>', unsafe_allow_html=True)
+        st.markdown('<h3 class="section-header">📊 Key Performance Indicators</h3>', unsafe_allow_html=True) # --- BEAUTIFY: Added icon ---
         
         st.markdown('<div class="metric-card">', unsafe_allow_html=True)
         st.markdown('<p class="metric-label">Capacity Factor</p>', unsafe_allow_html=True)
@@ -586,37 +574,6 @@ if page == "Wind Dashboard":
         payback_display = f"{payback_period:.1f} years" if payback_period != float('inf') else "> Project Lifetime"
         st.markdown(f'<p class="metric-value">{payback_display}</p>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-        
-        # District comparison
-        st.markdown('<h3 class="section-header">District Comparison</h3>', unsafe_allow_html=True)
-        comparison_data = []
-        for district, data in district_data.items():
-            comparison_data.append({
-                "District": district,
-                "Wind Speed (m/s)": data["wind_speed"],
-                "Potential": data["potential"],
-                "Wind Potential (MW/sq.km)": data["wind_potential"]
-            })
-        
-        comparison_df = pd.DataFrame(comparison_data)
-        st.dataframe(comparison_df, use_container_width=True, height=200)
-        
-        # Data sources
-        st.markdown('<h3 class="section-header">Data Sources</h3>', unsafe_allow_html=True)
-        st.markdown("""
-        - **National Institute of Wind Energy (NIWE):** [Wind Resource Map of India](https://niwe.res.in/department_wra_about.php)
-        - **Ministry of New and Renewable Energy (MNRE):** [Wind Energy Potential](https://mnre.gov.in/wind-energy-potential)
-        - **India Meteorological Department (IMD):** [Climate Data](https://mausam.imd.gov.in/)
-        - **Madhya Pradesh Energy Department:** [Renewable Energy Policy](https://www.mprenewable.nic.in/)
-        """)
-
-    # Footer
-    st.markdown("""
-    <p class="footer">
-        © 2025 Wind Energy Analytics Dashboard by PRAKARSH | Data Sources: NIWE, MNRE, IMD<br>
-        For informational purposes only. Actual project feasibility requires detailed site assessment.
-    </p>
-    """, unsafe_allow_html=True)
 
 elif page == "Data Sources & Information":
     st.markdown('<h1 class="main-header">📚 Data Sources & Methodology</h1>', unsafe_allow_html=True)
@@ -665,7 +622,6 @@ elif page == "Data Sources & Information":
     #### Step 2: Turbine Power Conversion
     The simplified linear formula in the dashboard is an approximation. A rigorous analysis uses a manufacturer-specific **Power Curve**. This curve plots the turbine's power output (in kW) against different wind speeds. It defines the **cut-in speed** (where the turbine starts generating power, ~3-4 m/s), the **rated speed** (where it reaches maximum output), and the **cut-out speed** (where it shuts down for safety, ~25 m/s).
     
-    
     #### Step 3: Annual Energy Production (AEP) Calculation
     The primary metric for a wind farm's performance is its **Capacity Utilization Factor (CUF)**, not the simplified capacity factor. The CUF is the ratio of the actual energy generated over a year to the maximum possible energy that could have been generated at full rated capacity.
 
@@ -695,14 +651,10 @@ elif page == "Data Sources & Information":
     """
     )
 
-# Replace your existing "AI Assistant" block with this one
-
 elif page == "AI Assistant":
     st.markdown('<h1 class="main-header">🤖 AI Assistant for Wind Energy</h1>', unsafe_allow_html=True)
-    st.info("Ask a question about wind energy, technology, or policy. Improvements are currently underway.")
+    st.info("Ask a question about wind energy, technology, or policy. This assistant uses a free, open-source model from Hugging Face.")
 
-    # --- Hugging Face Configuration ---
-    # UPDATED to a more reliable model on the free tier
     API_URL = "https://api-inference.huggingface.co/models/google/gemma-7b-it" 
     
     if 'HF_TOKEN' in st.secrets:
@@ -714,7 +666,6 @@ elif page == "AI Assistant":
     def query_model(payload):
         response = requests.post(API_URL, headers=headers, json=payload)
         return response
-    # --- End Configuration ---
 
     user_prompt = st.text_area("Your question:", placeholder="e.g., How does a wind turbine generate electricity?", height=100)
 
@@ -723,7 +674,7 @@ elif page == "AI Assistant":
             with st.spinner("Querying the AI model... This may take a moment on the first run."):
                 try:
                     response = query_model({
-                        "inputs": user_prompt, # Simpler prompt for Gemma
+                        "inputs": user_prompt,
                         "parameters": {"max_new_tokens": 250}
                     })
                     
@@ -731,7 +682,6 @@ elif page == "AI Assistant":
                         output = response.json()
                         if isinstance(output, list) and 'generated_text' in output[0]:
                             generated_text = output[0]['generated_text']
-                            # Clean up the response by removing the initial prompt if it's included
                             answer = generated_text.replace(user_prompt, "").strip()
                             st.markdown("### Answer:")
                             st.write(answer)
@@ -759,11 +709,9 @@ elif page == "Feedback & Support":
     
     st.info("We value your feedback! Please use the form below to report issues, suggest features, or ask questions.")
     
-    # Get email config
     email_config = get_email_config()
 
     st.markdown('<div class="feedback-form">', unsafe_allow_html=True)
-    
     with st.form(key="feedback_form"):
         name = st.text_input("Your Name", placeholder="Enter your full name")
         email = st.text_input("Your Email", placeholder="Enter a valid email address")
@@ -784,8 +732,8 @@ elif page == "Feedback & Support":
             with st.spinner("Sending your feedback..."):
                 success = send_feedback_email(name, email, feedback_type, message, email_config)
                 if success:
-                    st.success("Thank you for your feedback! We have received your message and will get back to you shortly.")
-                else:
-                    st.error("Sorry, something went wrong. Please try again later or contact the administrator directly.")
+                    st.success("Thank you for your feedback! We have received your message.")
+                    st.balloons() # --- BEAUTIFY: Added balloons for a fun confirmation ---
+                # Error is handled in the send_feedback_email function
 
     st.markdown('</div>', unsafe_allow_html=True)
