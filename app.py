@@ -15,219 +15,158 @@ import plotly.graph_objects as go
 import streamlit.components.v1 as components
 
 # Page configuration
-st.set_page_config(
-    page_title="Wind Energy Analytics - Madhya Pradesh",
-    page_icon="🌬️",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-# Modern, professional color scheme with proper contrast
+# --- NEW UI/UX: "SOLAR FLARE" THEME ---
 st.markdown("""
 <style>
-    /* Main background */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+    /* --- Base Variables --- */
+    :root {
+        --solar-orange: #FF8C00;
+        --solar-yellow: #FFD700;
+        --dark-bg: #121212;
+        --light-bg: #1E1E1E;
+        --container-bg: rgba(28, 28, 28, 0.85);
+        --text-color: #E0E0E0;
+        --subtle-text-color: #A0A0A0;
+        --border-gradient: linear-gradient(90deg, var(--solar-orange), var(--solar-yellow));
+        --border-color: #333;
+    }
+
+    /* --- General Styling --- */
+    html, body, [class*="st-"] {
+        font-family: 'Montserrat', sans-serif;
+    }
+
     .stApp {
-        background-color: #0f1a2a;
-        color: #e6e9f0;
+        background-color: var(--dark-bg);
+        color: var(--text-color);
     }
-    
-    /* Headers and text */
+
+    /* --- Main Header --- */
     .main-header {
-        font-size: 2.8rem;
-        color: #4fd1c5;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.8rem;
-        border-bottom: 3px solid #4fd1c5;
+        font-size: 3rem;
         font-weight: 700;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    /* Sidebar styling */
-    .css-1d391kg, .css-1v0mbdj, .css-1y4v3va {
-        background-color: #1a202c !important;
-    }
-    
-    .css-1d391kg p, .css-1v0mbdj p, .css-1y4v3va p {
-        color: #e6e9f0 !important;
-    }
-    
-    /* Metric cards */
-    .metric-card {
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-        padding: 1.5rem;
-        border-radius: 0.8rem;
-        margin-bottom: 1.2rem;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
         color: white;
-        border: 1px solid #4a5568;
+        background: -webkit-linear-gradient(45deg, var(--solar-orange), var(--solar-yellow));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        border-bottom: 2px solid var(--solar-orange);
     }
     
+    /* --- Sidebar Styling --- */
+    [data-testid="stSidebar"] {
+        background-color: var(--light-bg);
+        border-right: 1px solid var(--container-bg);
+    }
+    
+    [data-testid="stSidebar"] h3 {
+        color: var(--solar-yellow);
+    }
+
+    /* --- Custom UI Card Container --- */
+    .card {
+        background: var(--container-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+    
+    /* --- Metric Cards (Original) --- */
+    .metric-card {
+        background: var(--light-bg);
+        border-top: 4px solid;
+        border-image-source: var(--border-gradient);
+        border-image-slice: 1;
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.2s ease-in-out;
+    }
+    .metric-card:hover {
+        transform: scale(1.05);
+    }
     .metric-value {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #4fd1c5;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--solar-yellow);
     }
-    
     .metric-label {
         font-size: 0.9rem;
-        color: #cbd5e0;
+        color: var(--subtle-text-color);
         text-transform: uppercase;
-        letter-spacing: 1.2px;
-        font-weight: 500;
-    }
-    
-    /* Section headers */
-    .section-header {
-        color: #4fd1c5;
-        border-left: 5px solid #4fd1c5;
-        padding-left: 12px;
-        margin-top: 1.5rem;
-        margin-bottom: 1rem;
         font-weight: 600;
     }
+
+    /* --- Tabs Styling --- */
+    .stTabs [data-baseweb="tab"] {
+        background-color: var(--container-bg);
+        border-radius: 8px;
+        color: var(--subtle-text-color);
+        margin: 0 5px;
+        border: 1px solid var(--border-color);
+    }
+    .stTabs [data-baseweb="tab"][aria-selected="true"] {
+        background-image: var(--border-gradient);
+        color: black;
+        font-weight: bold;
+    }
+
+    /* --- Buttons and Inputs --- */
+    .stButton > button {
+        background-image: var(--border-gradient);
+        color: black !important;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: opacity 0.2s;
+    }
+    .stButton > button:hover {
+        opacity: 0.8;
+        border: none;
+        color: black;
+    }
     
-    /* Footer */
+    /* --- Footer --- */
     .footer {
         text-align: center;
-        margin-top: 2.5rem;
-        color: #a0aec0;
-        font-size: 0.85rem;
-        padding-top: 1.2rem;
-        border-top: 1px solid #4a5568;
-    }
-    
-    /* Sliders */
-    .stSlider > div > div > div {
-        background: linear-gradient(90deg, #4fd1c5, #2c7a7b);
-    }
-    
-    /* Wind speed indicator */
-    .wind-speed-indicator {
-        height: 12px;
-        background: linear-gradient(90deg, #90cdf4, #4fd1c5, #2c7a7b);
-        border-radius: 6px;
-        margin: 12px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    
-    /* District selector */
-    .district-selector {
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-        padding: 1.2rem;
-        border-radius: 0.8rem;
-        margin-bottom: 1.2rem;
-        border: 1px solid #4a5568;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    }
-    
-    /* Source info */
-    .source-info {
+        margin-top: 3rem;
+        color: var(--subtle-text-color);
         font-size: 0.8rem;
-        color: #a0aec0;
-        font-style: italic;
     }
     
-    /* Map container */
-    .map-container {
-        border-radius: 0.8rem;
-        overflow: hidden;
-        margin-bottom: 1.2rem;
-        border: 1px solid #4a5568;
-        box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    }
-    
-    /* Calculation boxes */
-    .calculation-box {
-        background-color: #2d3748;
-        border-radius: 8px;
-        padding: 15px;
-        margin: 10px 0;
-        border-left: 4px solid #4fd1c5;
-        font-family: 'Courier New', monospace;
-        font-size: 0.9rem;
-        color: #e6e9f0;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    
-    /* Source links */
-    .source-link {
-        color: #4fd1c5;
-        text-decoration: none;
-        font-weight: 500;
-    }
-    
-    .source-link:hover {
-        color: #38b2ac;
-        text-decoration: underline;
-    }
-    
-    /* Navigation buttons */
-    .nav-button {
-        background-color: #2c7a7b !important;
-        color: white !important;
-        border: 1px solid #4fd1c5 !important;
-        margin: 5px;
-    }
-    
-    /* Text elements */
-    .stMarkdown, .stText, .stInfo, .stSuccess, .stWarning {
-        color: #e6e9f0;
-    }
-    
-    /* Dataframes */
-    .dataframe {
-        background-color: #2d3748;
-        color: #e6e9f0;
-    }
-    
-    /* Input fields */
-    .stTextInput input, .stNumberInput input, .stSelectbox select {
-        background-color: #2d3748;
-        color: #e6e9f0;
-        border: 1px solid #4a5568;
-    }
-    
-    /* Radio buttons */
-    .stRadio > div {
-        background-color: #2d3748;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid #4a5568;
-    }
-    
-    /* Expander */
+    /* --- Expander Styling --- */
     .streamlit-expanderHeader {
-        background-color: #2d3748;
-        color: #e6e9f0;
-        border: 1px solid #4a5568;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--solar-yellow);
+        background: var(--container-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
     }
     
-    .streamlit-expanderContent {
-        background-color: #2d3748;
-        color: #e6e9f0;
-    }
-    
-    /* Chart background */
-    .css-1y4v3va {
-        background-color: #1a202c;
-    }
-    
-    /* Custom chart styling */
-    .chart-container {
-        background-color: #2d3748;
-        padding: 15px;
-        border-radius: 8px;
-        margin: 10px 0;
-    }
-    
-    /* Feedback form styling */
-    .feedback-form {
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-        padding: 2rem;
+    .google-form-container {
+        padding: 1rem;
         border-radius: 1rem;
-        border: 1px solid #4fd1c5;
+        border: 1px solid var(--border-color);
         margin: 1rem 0;
+        text-align: center;
     }
+    .google-form-container iframe {
+        width: 100%;
+        height: 1200px;
+        border: none;
+        border-radius: 8px;
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -334,20 +273,22 @@ district_data = {
 
 if page == "Wind Dashboard":
     # Header
-    st.markdown('<h1 class="main-header">🌬️ Wind Energy Analytics Dashboard - Madhya Pradesh</h1>', unsafe_allow_html=True)
-
+    st.markdown('<h1 class="main-header">🌬️ Wind Energy Analytics Dashboard</h1>', unsafe_allow_html=True)
     # Introduction
-    st.info("""
-    This dashboard provides wind energy potential analysis for districts in Madhya Pradesh using verified data from government sources and research institutions.
+    
+   
+st.markdown('<div class="card">', unsafe_allow_html=True)
+st.info("""
+This dashboard provides wind energy potential analysis for districts in Madhya Pradesh using verified data from government sources and research institutions.
     Adjust parameters in the sidebar to simulate different project scenarios and evaluate financial viability.
-    """)
-
+""")
+st.markdown('</div>', unsafe_allow_html=True)
     # Sidebar for user inputs
     with st.sidebar:
-        st.markdown('<div class="district-selector">', unsafe_allow_html=True)
-        st.header("📍 Select District")
-        selected_district = st.selectbox("", list(district_data.keys()), index=1)
-        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("📍 Simulation Controls")
+    selected_district = st.selectbox("Select District", list(district_data.keys()), index=1)
+    st.markdown('</div>', unsafe_allow_html=True)
         
         # --- DESIGN: Added icons to headers ---
         st.markdown('<h3 class="section-header">⚙️ Project Parameters</h3>', unsafe_allow_html=True)
