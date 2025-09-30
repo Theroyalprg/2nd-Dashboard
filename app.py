@@ -570,15 +570,9 @@ elif page == "Tableau Dashboard":
     st.markdown('<h1 class="main-header">📊 Tableau Public Dashboard</h1>', unsafe_allow_html=True)
     st.info("This page displays an interactive dashboard hosted on Tableau Public.")
 
-    tableau_url = "https://public.tableau.com/views/RenewablePowerCapacityinIndia/Dashboard1?:language=en-US&:display_count=n&:origin=viz_share_link"
+    tableau_url = "https://public.tableau.com/shared/HRDB37R89?:display_count=n&:origin=viz_share_link"
     
-    with st.expander("How to embed your own dashboard"):
-        st.markdown("""
-        1.  Go to your dashboard on [Tableau Public](https://public.tableau.com/).
-        2.  Click the **Share** button at the bottom of the viz.
-        3.  Copy the URL from the **Link** box.
-        4.  Paste that URL into the `tableau_url` variable in the code.
-        """)
+    
 
     embed_code = f'<iframe src="{tableau_url}:showVizHome=no&:embed=true" width="100%" height="800px" frameBorder="0"></iframe>'
     
